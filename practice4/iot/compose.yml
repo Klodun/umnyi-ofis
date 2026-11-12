@@ -1,0 +1,11 @@
+services:
+  nodered:
+    image: nodered/node-red:4.0
+    container_name: nodered
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Moscow

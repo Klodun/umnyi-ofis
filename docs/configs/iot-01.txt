@@ -3,9 +3,19 @@ IOT-01 — узел IoT / Node-RED (РЕД ОС 8)
 hostname: IOT-01
 Интерфейс: enp2s0 — 192.168.50.10/26, шлюз 192.168.50.1 (VLAN 50)
 Сервисы: docker, sshd
+Каталог ПР №4: /root/practice4/iot (compose.yml, data/flows.json)
 
 --- ip -br a
 enp2s0           UP             192.168.50.10/26
 --- ip r
 default via 192.168.50.1 dev enp2s0 proto static metric 100
 192.168.50.0/26 dev enp2s0 proto kernel scope link src 192.168.50.10 metric 100
+
+--- ПР №4: Node-RED
+docker compose ps
+NAME      IMAGE                  COMMAND             SERVICE   STATUS                    PORTS
+nodered   nodered/node-red:4.0   "./entrypoint.sh"   nodered   Up (healthy)              0.0.0.0:1880->1880/tcp, :::1880->1880/tcp
+
+Версия Node-RED: 4.0.9. Поток: inject (5 c) -> change -> http request ->
+http://192.168.40.10:8080/api/readings. Датчики: TEMP-01 (server_room, C),
+HUM-01 (work_area, %).
