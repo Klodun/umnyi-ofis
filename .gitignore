@@ -1,0 +1,25 @@
+# Пароли, ключи, токены
+*.key
+*.pem
+*.pfx
+passwords*
+secrets*
+.env
+.env.*
+
+# Рабочие файлы баз данных
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+
+# Служебное и временное
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.log
+~$*
+__pycache__/
+node_modules/
+.venv/

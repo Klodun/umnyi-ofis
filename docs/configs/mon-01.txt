@@ -1,0 +1,10 @@
+MON-01 — мониторинг (РЕД ОС 8)
+
+hostname: MON-01
+Интерфейс: enp2s0 — 192.168.40.11/26, шлюз 192.168.40.1 (VLAN 40)
+
+--- ip -br a
+enp2s0           UP             192.168.40.11/26
+--- ip r
+default via 192.168.40.1 dev enp2s0 proto static metric 100
+192.168.40.0/26 dev enp2s0 proto kernel scope link src 192.168.40.11 metric 100

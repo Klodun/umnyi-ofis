@@ -1,0 +1,12 @@
+CTRL-01 — сервер приложений (РЕД ОС 8)
+
+hostname: CTRL-01
+Интерфейс: enp2s0 — 192.168.40.10/26, шлюз 192.168.40.1 (VLAN 40)
+Сервисы: docker, sshd
+Каталог проекта Nginx: /root/nginx-test
+
+--- ip -br a
+enp2s0           UP             192.168.40.10/26
+--- ip r
+default via 192.168.40.1 dev enp2s0 proto static metric 100
+192.168.40.0/26 dev enp2s0 proto kernel scope link src 192.168.40.10 metric 100
