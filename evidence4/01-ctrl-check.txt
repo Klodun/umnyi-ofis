@@ -1,8 +1,9 @@
 $ hostname && date
-CTRL-01
-Чт 12 ноя 2026 14:18:23 MSK
+
 
 $ ip -br a | head -4
+CTRL-01
+Чт 12 ноя 2026 14:45:39 MSK
 lo               UNKNOWN        127.0.0.1/8 ::1/128 
 enp2s0           UP             192.168.40.10/26 fe80::492:3cbe:d915:497f/64 
 ens1             DOWN           
@@ -24,7 +25,7 @@ ctrl-receiver-1   node:22-alpine   "docker-entrypoint.s…"   receiver   4 hours
 $ curl -i --connect-timeout 10 http://127.0.0.1:8080/health
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
-Date: Thu, 12 Nov 2026 11:18:26 GMT
+Date: Thu, 12 Nov 2026 11:45:42 GMT
 Connection: keep-alive
 Keep-Alive: timeout=5
 Transfer-Encoding: chunked
@@ -37,7 +38,7 @@ Access-Control-Allow-Origin: *
 Content-Type: text/html; charset=utf-8
 Content-Length: 1733
 ETag: W/"6c5-pFCD6spS6IiHVc/64Ahmq9puRqU"
-Date: Thu, 12 Nov 2026 11:18:27 GMT
+Date: Thu, 12 Nov 2026 11:45:43 GMT
 Connection: keep-alive
 Keep-Alive: timeout=5
 

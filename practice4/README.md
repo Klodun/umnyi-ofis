@@ -84,12 +84,14 @@ curl -I http://127.0.0.1:1880/
 
 * `msg.payload` — выражение JSONata `$round(18 + $random() * 8, 1)` (для влажности
   `$round(35 + $random() * 25, 1)`);
-* `msg.timestamp` — выражение JSONata `$millis()`.
+* `msg.timestamp` — свойство типа «timestamp» (в `flows.json` это `vt: "date"`), узел
+  подставляет текущее время в миллисекундах (`Date.now()`).
 
-> **Грабли.** Если в `inject` задать свойство `msg.timestamp` типом «timestamp», узел его
-> не заполняет, `reading.timestamp` остаётся `undefined`, и приёмник отвечает
-> `{"error":"invalid_fields"}`. Рабочий вариант — тип «expression» (JSONata) `$millis()`.
-> Симптом видно в отладочной панели Node-RED: ответ приёмника `invalid_fields`.
+> **Грабли.** `flows.json` здесь собран текстом, а не в редакторе. Если для свойства
+> `msg.timestamp` написать `vt: "timestamp"`, узел молча ничего не подставит: такого типа
+> в Node-RED нет, пункт «timestamp» редактор хранит как `date`. В сообщении окажется
+> `msg.timestamp: ""`, `reading.timestamp` уйдёт пустым, и приёмник ответит
+> `{"error":"invalid_fields"}`. Правильно — `vt: "date"`.
 
 ## Проверка
 
