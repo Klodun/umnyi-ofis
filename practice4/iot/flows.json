@@ -19,8 +19,8 @@
       },
       {
         "p": "timestamp",
-        "v": "$millis()",
-        "vt": "jsonata"
+        "v": "",
+        "vt": "date"
       }
     ],
     "repeat": "5",
@@ -158,8 +158,8 @@
       },
       {
         "p": "timestamp",
-        "v": "$millis()",
-        "vt": "jsonata"
+        "v": "",
+        "vt": "date"
       }
     ],
     "repeat": "5",
