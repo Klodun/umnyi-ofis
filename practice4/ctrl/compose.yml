@@ -6,7 +6,6 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      # Z задаёт SELinux-метку только для этого учебного файла.
       - ./receiver.js:/app/receiver.js:ro,Z
     restart: unless-stopped
     logging:
