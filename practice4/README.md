@@ -38,6 +38,10 @@ WIN-01 (браузер)                    IOT-01                     CTRL-01
 
 ## Запуск на CTRL-01
 
+В раздаточных материалах файл называется `receiver.yml`; здесь он лежит как `compose.yml` —
+это тот же compose-файл, `docker compose` подхватывает его без `-f`. Содержимое совпадает
+с тем, что реально запущено на CTRL-01.
+
 ```bash
 cd ~/practice4/ctrl          # файлы этой папки: compose.yml и receiver.js
 docker compose up -d

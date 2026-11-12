@@ -1,4 +1,3 @@
-$ cat /root/practice4/receiver-log.txt
 receiver-1  | {"received_at":"2026-11-12T11:06:14.576Z","sensor_id":"HUM-01","zone":"work_area","unit":"%","value":48.3,"timestamp":1794481574537}
 receiver-1  | {"received_at":"2026-11-12T11:06:19.547Z","sensor_id":"TEMP-01","zone":"server_room","unit":"C","value":21.4,"timestamp":1794481579539}
 receiver-1  | {"received_at":"2026-11-12T11:06:19.548Z","sensor_id":"HUM-01","zone":"work_area","unit":"%","value":35,"timestamp":1794481579540}
