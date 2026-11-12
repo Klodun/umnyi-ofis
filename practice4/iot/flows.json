@@ -1,0 +1,287 @@
+[
+  {
+    "id": "flow_tab_sensors",
+    "type": "tab",
+    "label": "Виртуальные датчики",
+    "disabled": false,
+    "info": "TEMP-01 (серверная) и HUM-01 (рабочая зона) каждые 5 секунд формируют показание и отправляют его POST-запросом на приёмник CTRL-01 (http://192.168.40.10:8080/api/readings)."
+  },
+  {
+    "id": "inj_temp",
+    "type": "inject",
+    "z": "flow_tab_sensors",
+    "name": "TEMP-01 каждые 5 с",
+    "props": [
+      {
+        "p": "payload",
+        "v": "$round(18 + $random() * 8, 1)",
+        "vt": "jsonata"
+      },
+      {
+        "p": "timestamp",
+        "v": "$millis()",
+        "vt": "jsonata"
+      }
+    ],
+    "repeat": "5",
+    "crontab": "",
+    "once": true,
+    "onceDelay": "1",
+    "topic": "",
+    "x": 180,
+    "y": 120,
+    "wires": [
+      [
+        "chg_temp"
+      ]
+    ]
+  },
+  {
+    "id": "chg_temp",
+    "type": "change",
+    "z": "flow_tab_sensors",
+    "name": "TEMP-01: показание",
+    "rules": [
+      {
+        "t": "set",
+        "p": "reading.value",
+        "pt": "msg",
+        "to": "payload",
+        "tot": "msg"
+      },
+      {
+        "t": "set",
+        "p": "reading.sensor_id",
+        "pt": "msg",
+        "to": "TEMP-01",
+        "tot": "str"
+      },
+      {
+        "t": "set",
+        "p": "reading.zone",
+        "pt": "msg",
+        "to": "server_room",
+        "tot": "str"
+      },
+      {
+        "t": "set",
+        "p": "reading.timestamp",
+        "pt": "msg",
+        "to": "timestamp",
+        "tot": "msg"
+      },
+      {
+        "t": "set",
+        "p": "reading.unit",
+        "pt": "msg",
+        "to": "C",
+        "tot": "str"
+      },
+      {
+        "t": "set",
+        "p": "payload",
+        "pt": "msg",
+        "to": "reading",
+        "tot": "msg"
+      },
+      {
+        "t": "set",
+        "p": "headers",
+        "pt": "msg",
+        "to": "{\"Content-Type\":\"application/json\"}",
+        "tot": "json"
+      }
+    ],
+    "action": "",
+    "property": "",
+    "from": "",
+    "to": "",
+    "reg": false,
+    "x": 450,
+    "y": 120,
+    "wires": [
+      [
+        "http_temp"
+      ]
+    ]
+  },
+  {
+    "id": "http_temp",
+    "type": "http request",
+    "z": "flow_tab_sensors",
+    "name": "POST /api/readings",
+    "method": "POST",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "http://192.168.40.10:8080/api/readings",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "x": 720,
+    "y": 120,
+    "wires": [
+      [
+        "dbg_temp"
+      ]
+    ]
+  },
+  {
+    "id": "dbg_temp",
+    "type": "debug",
+    "z": "flow_tab_sensors",
+    "name": "ответ CTRL (TEMP-01)",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": true,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "payload",
+    "statusType": "auto",
+    "x": 980,
+    "y": 120,
+    "wires": []
+  },
+  {
+    "id": "inj_hum",
+    "type": "inject",
+    "z": "flow_tab_sensors",
+    "name": "HUM-01 каждые 5 с",
+    "props": [
+      {
+        "p": "payload",
+        "v": "$round(35 + $random() * 25, 1)",
+        "vt": "jsonata"
+      },
+      {
+        "p": "timestamp",
+        "v": "$millis()",
+        "vt": "jsonata"
+      }
+    ],
+    "repeat": "5",
+    "crontab": "",
+    "once": true,
+    "onceDelay": "1",
+    "topic": "",
+    "x": 180,
+    "y": 260,
+    "wires": [
+      [
+        "chg_hum"
+      ]
+    ]
+  },
+  {
+    "id": "chg_hum",
+    "type": "change",
+    "z": "flow_tab_sensors",
+    "name": "HUM-01: показание",
+    "rules": [
+      {
+        "t": "set",
+        "p": "reading.value",
+        "pt": "msg",
+        "to": "payload",
+        "tot": "msg"
+      },
+      {
+        "t": "set",
+        "p": "reading.sensor_id",
+        "pt": "msg",
+        "to": "HUM-01",
+        "tot": "str"
+      },
+      {
+        "t": "set",
+        "p": "reading.zone",
+        "pt": "msg",
+        "to": "work_area",
+        "tot": "str"
+      },
+      {
+        "t": "set",
+        "p": "reading.timestamp",
+        "pt": "msg",
+        "to": "timestamp",
+        "tot": "msg"
+      },
+      {
+        "t": "set",
+        "p": "reading.unit",
+        "pt": "msg",
+        "to": "%",
+        "tot": "str"
+      },
+      {
+        "t": "set",
+        "p": "payload",
+        "pt": "msg",
+        "to": "reading",
+        "tot": "msg"
+      },
+      {
+        "t": "set",
+        "p": "headers",
+        "pt": "msg",
+        "to": "{\"Content-Type\":\"application/json\"}",
+        "tot": "json"
+      }
+    ],
+    "action": "",
+    "property": "",
+    "from": "",
+    "to": "",
+    "reg": false,
+    "x": 450,
+    "y": 260,
+    "wires": [
+      [
+        "http_hum"
+      ]
+    ]
+  },
+  {
+    "id": "http_hum",
+    "type": "http request",
+    "z": "flow_tab_sensors",
+    "name": "POST /api/readings",
+    "method": "POST",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "http://192.168.40.10:8080/api/readings",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "x": 720,
+    "y": 260,
+    "wires": [
+      [
+        "dbg_hum"
+      ]
+    ]
+  },
+  {
+    "id": "dbg_hum",
+    "type": "debug",
+    "z": "flow_tab_sensors",
+    "name": "ответ CTRL (HUM-01)",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": true,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "payload",
+    "statusType": "auto",
+    "x": 980,
+    "y": 260,
+    "wires": []
+  }
+]

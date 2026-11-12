@@ -1,0 +1,16 @@
+services:
+  receiver:
+    image: node:22-alpine
+    working_dir: /app
+    command: ["node", "receiver.js"]
+    ports:
+      - "8080:8080"
+    volumes:
+      # Z задаёт SELinux-метку только для этого учебного файла.
+      - ./receiver.js:/app/receiver.js:ro,Z
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

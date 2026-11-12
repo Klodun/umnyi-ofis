@@ -4,9 +4,21 @@ hostname: CTRL-01
 Интерфейс: enp2s0 — 192.168.40.10/26, шлюз 192.168.40.1 (VLAN 40)
 Сервисы: docker, sshd
 Каталог проекта Nginx: /root/nginx-test
+Каталог ПР №4: /root/practice4/ctrl (compose.yml, receiver.js)
 
 --- ip -br a
 enp2s0           UP             192.168.40.10/26
 --- ip r
 default via 192.168.40.1 dev enp2s0 proto static metric 100
 192.168.40.0/26 dev enp2s0 proto kernel scope link src 192.168.40.10 metric 100
+
+--- ПР №4: приёмник показаний датчиков
+docker compose ps
+NAME              IMAGE            COMMAND                  SERVICE    STATUS       PORTS
+ctrl-receiver-1   node:22-alpine   "docker-entrypoint.s…"   receiver   Up           0.0.0.0:8080->8080/tcp, :::8080->8080/tcp
+
+curl -i http://127.0.0.1:8080/health
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+{"status":"ok"}

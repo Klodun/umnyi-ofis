@@ -57,17 +57,38 @@
 ## Состав репозитория
 
 ```
-README.md                      — этот файл
-journal.md                     — журнал работ по дням
-.gitignore                     — исключения (пароли, ключи, SQLite)
-compose.yml                    — Docker Compose для Nginx (ПР №3)
-docs/addresses.md              — таблица адресации и портов
-docs/plan-office.plan          — план офиса (remplanner)
-docs/network-scheme.drawio     — логическая схема сети (draw.io)
-docs/screens/                  — экспорт плана и схемы, скриншоты проверок ПР №2
-docs/configs/                  — конфигурации узлов (адресация, маршруты)
-evidence/                      — 14 скриншотов проверок ПР №3
+README.md                          — этот файл
+journal.md                         — журнал работ по дням
+.gitignore                         — исключения (пароли, ключи, SQLite)
+compose.yml                        — Docker Compose для Nginx (ПР №3)
+practice4/README.md                — описание ПР №4 (виртуальные датчики)
+practice4/ctrl/compose.yml         — приёмник показаний на CTRL-01 (порт 8080)
+practice4/ctrl/receiver.js         — код приёмника из раздаточных материалов
+practice4/iot/compose.yml          — Node-RED на IOT-01 (порт 1880)
+practice4/iot/flows.json           — поток с датчиками TEMP-01 и HUM-01
+docs/addresses.md                  — таблица адресации и портов
+docs/plan-office.plan              — план офиса (remplanner)
+docs/network-scheme.drawio         — логическая схема сети (draw.io)
+docs/screens/                      — экспорт плана и схемы, скриншоты проверок ПР №2
+docs/configs/                      — конфигурации узлов (адресация, маршруты, сервисы)
+evidence/                          — 14 скриншотов проверок ПР №3
+evidence4/                         — доказательства ПР №4: консольные проверки,
+                                     лог приёмника, скриншот редактора Node-RED
 ```
+
+## Виртуальные датчики (ПР №4)
+
+Два виртуальных датчика живут в Node-RED на IOT-01 и каждые 5 секунд отправляют показание
+на приёмник в CTRL-01:
+
+| Датчик | Зона | Единица | Диапазон значения |
+|---|---|---|---|
+| TEMP-01 | server_room | °C | 18…26 |
+| HUM-01 | work_area | % | 35…60 |
+
+Цепочка в Node-RED: `inject` (каждые 5 с) → `change` (сборка объекта `msg.reading`) →
+`http request` (`POST http://192.168.40.10:8080/api/readings`) → `debug`.
+Подробности запуска и проверки — в `practice4/README.md`.
 
 ## Как проверял
 
@@ -76,3 +97,7 @@ evidence/                      — 14 скриншотов проверок ПР
   Скриншоты: `docs/screens/pr2-win-ping.png`, `evidence/`.
 * ПР №3 — Docker и Docker Compose установлены на CTRL-01, DB-01, IOT-01; Nginx отвечает `HTTP/1.1 200 OK`
   с порта 8080 при запуске и через `docker run`, и через `docker compose`; после проверки порт освобождён.
+* ПР №4 — приёмник на CTRL-01 отвечает `{"status":"ok"}` на `/health`; Node-RED на IOT-01 открывается
+  с WIN-01 по `http://192.168.50.10:1880`; оба датчика присылают показания каждые 5 секунд, приёмник
+  пишет их в журнал (100 записей за ~8 минут, формат ответа `{"status":"ok","sensor_id":…,"value":…}`).
+  Доказательства: `evidence4/01-ctrl-check.txt`, `evidence4/02-receiver-log.txt`, `evidence4/03-iot-check.txt`.
