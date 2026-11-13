@@ -390,6 +390,13 @@
       },
       {
         "t": "set",
+        "p": "human",
+        "pt": "msg",
+        "to": "ВЕНТИЛЯТОР ВКЛЮЧЁН (ON)",
+        "tot": "str"
+      },
+      {
+        "t": "set",
         "p": "payload",
         "pt": "msg",
         "to": "fan",
@@ -460,6 +467,13 @@
       },
       {
         "t": "set",
+        "p": "human",
+        "pt": "msg",
+        "to": "ВЕНТИЛЯТОР ВЫКЛЮЧЕН (OFF)",
+        "tot": "str"
+      },
+      {
+        "t": "set",
         "p": "payload",
         "pt": "msg",
         "to": "fan",
@@ -519,9 +533,9 @@
     "tosidebar": true,
     "console": false,
     "tostatus": true,
-    "complete": "payload",
+    "complete": "human",
     "targetType": "msg",
-    "statusVal": "payload.state",
+    "statusVal": "human",
     "statusType": "msg",
     "x": 1120,
     "y": 200,
