@@ -317,56 +317,6 @@
     ]
   },
   {
-    "id": "inj_fan_hot",
-    "type": "inject",
-    "z": "fan_tab",
-    "name": "Проверка: 35 °C",
-    "props": [
-      {
-        "p": "payload",
-        "v": "35",
-        "vt": "num"
-      }
-    ],
-    "repeat": "",
-    "crontab": "",
-    "once": false,
-    "onceDelay": 0.1,
-    "topic": "",
-    "x": 200,
-    "y": 180,
-    "wires": [
-      [
-        "sw_fan"
-      ]
-    ]
-  },
-  {
-    "id": "inj_fan_cold",
-    "type": "inject",
-    "z": "fan_tab",
-    "name": "Проверка: 25 °C",
-    "props": [
-      {
-        "p": "payload",
-        "v": "25",
-        "vt": "num"
-      }
-    ],
-    "repeat": "",
-    "crontab": "",
-    "once": false,
-    "onceDelay": 0.1,
-    "topic": "",
-    "x": 200,
-    "y": 260,
-    "wires": [
-      [
-        "sw_fan"
-      ]
-    ]
-  },
-  {
     "id": "sw_fan",
     "type": "switch",
     "z": "fan_tab",
