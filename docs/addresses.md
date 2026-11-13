@@ -16,16 +16,19 @@
 | 50 | 192.168.50.0/26 | IOT | 192.168.50.10 | 192.168.50.1 |
 | 99 | 192.168.99.0/26 | Cisco SW (управление) | 192.168.99.2 | 192.168.99.1 |
 
+Подсеть VLAN 99 заложена в план для управляемого коммутатора; в текущей сборке GNS3 коммутатор
+неуправляемый (Ethernet switch), поэтому VLAN 99 не используется.
+
 ## Порты коммутатора
 
 | Порт | Устройство | VLAN | Режим |
 |---|---|---|---|
-| G0/1 | WIN | 30 | access |
-| G0/2 | CTRL | 40 | access |
-| G0/3 | MON | 40 | access |
-| G0/4 | DB | 40 | access |
-| G0/5 | IOT | 50 | access |
-| G0/0 | Cisco RTR | 30, 40, 50, 99 | trunk |
+| Ethernet1 | WIN | 30 | access |
+| Ethernet2 | CTRL | 40 | access |
+| Ethernet3 | MON | 40 | access |
+| Ethernet4 | DB | 40 | access |
+| Ethernet5 | IOT | 50 | access |
+| Ethernet0 | REDOS8-5 | 30, 40, 50 | trunk (dot1q) |
 
 ## Порты сервисов
 
