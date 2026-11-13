@@ -35,6 +35,6 @@
 | Порт | Где | Назначение |
 |---|---|---|
 | 22/tcp | CTRL, MON, DB, IOT | SSH |
-| 8080/tcp | CTRL | ПР №3 — Nginx (docker run / docker compose), после проверки освобождён; ПР №4 — приёмник показаний датчиков (`/health`, `POST /api/readings`) |
+| 8080/tcp | CTRL | ПР №3 — Nginx (docker run / docker compose), после проверки освобождён; ПР №4 — приёмник показаний датчиков (`/health`, `POST /api/readings`); ПР №5 — приёмник v2, дополнительно `POST /api/actuators` |
 | 1880/tcp | IOT | ПР №4 — Node-RED (редактор потоков, `http://192.168.50.10:1880`) |
 | 3389/tcp | WIN | RDP |

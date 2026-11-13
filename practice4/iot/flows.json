@@ -283,5 +283,315 @@
     "x": 980,
     "y": 260,
     "wires": []
+  },
+  {
+    "id": "fan_tab",
+    "type": "tab",
+    "label": "Вентилятор FAN-01",
+    "disabled": false,
+    "info": "Задание №5. Показание TEMP-01 сравнивается с порогом 30 °C (switch). Если температура больше 30 — отдельный change собирает fan.state = ON, иначе второй change собирает fan.state = OFF. Объект fan уходит POST-запросом на приёмник CTRL-01 (/api/actuators)."
+  },
+  {
+    "id": "inj_fan_temp",
+    "type": "inject",
+    "z": "fan_tab",
+    "name": "TEMP-01 каждые 5 с",
+    "props": [
+      {
+        "p": "payload",
+        "v": "$round(25 + $random() * 10, 1)",
+        "vt": "jsonata"
+      }
+    ],
+    "repeat": "5",
+    "crontab": "",
+    "once": true,
+    "onceDelay": "1",
+    "topic": "",
+    "x": 200,
+    "y": 100,
+    "wires": [
+      [
+        "sw_fan"
+      ]
+    ]
+  },
+  {
+    "id": "inj_fan_hot",
+    "type": "inject",
+    "z": "fan_tab",
+    "name": "Проверка: 35 °C",
+    "props": [
+      {
+        "p": "payload",
+        "v": "35",
+        "vt": "num"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "x": 200,
+    "y": 180,
+    "wires": [
+      [
+        "sw_fan"
+      ]
+    ]
+  },
+  {
+    "id": "inj_fan_cold",
+    "type": "inject",
+    "z": "fan_tab",
+    "name": "Проверка: 25 °C",
+    "props": [
+      {
+        "p": "payload",
+        "v": "25",
+        "vt": "num"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "x": 200,
+    "y": 260,
+    "wires": [
+      [
+        "sw_fan"
+      ]
+    ]
+  },
+  {
+    "id": "sw_fan",
+    "type": "switch",
+    "z": "fan_tab",
+    "name": "Температура > 30 °C",
+    "property": "payload",
+    "propertyType": "msg",
+    "rules": [
+      {
+        "t": "gt",
+        "v": "30",
+        "vt": "num"
+      },
+      {
+        "t": "else"
+      }
+    ],
+    "checkall": "true",
+    "repair": false,
+    "outputs": 2,
+    "x": 500,
+    "y": 180,
+    "wires": [
+      [
+        "chg_fan_on"
+      ],
+      [
+        "chg_fan_off"
+      ]
+    ]
+  },
+  {
+    "id": "chg_fan_on",
+    "type": "change",
+    "z": "fan_tab",
+    "name": "Включить вентилятор (ON)",
+    "rules": [
+      {
+        "t": "set",
+        "p": "fan.state",
+        "pt": "msg",
+        "to": "ON",
+        "tot": "str"
+      },
+      {
+        "t": "set",
+        "p": "fan.actuator_id",
+        "pt": "msg",
+        "to": "FAN-01",
+        "tot": "str"
+      },
+      {
+        "t": "set",
+        "p": "fan.zone",
+        "pt": "msg",
+        "to": "server_room",
+        "tot": "str"
+      },
+      {
+        "t": "set",
+        "p": "fan.mode",
+        "pt": "msg",
+        "to": "auto",
+        "tot": "str"
+      },
+      {
+        "t": "set",
+        "p": "fan.timestamp",
+        "pt": "msg",
+        "to": "$millis()",
+        "tot": "jsonata"
+      },
+      {
+        "t": "set",
+        "p": "payload",
+        "pt": "msg",
+        "to": "fan",
+        "tot": "msg"
+      },
+      {
+        "t": "set",
+        "p": "headers",
+        "pt": "msg",
+        "to": "{\"Content-Type\":\"application/json\"}",
+        "tot": "json"
+      }
+    ],
+    "action": "",
+    "property": "",
+    "from": "",
+    "to": "",
+    "reg": false,
+    "x": 800,
+    "y": 120,
+    "wires": [
+      [
+        "http_fan",
+        "dbg_fan_state"
+      ]
+    ]
+  },
+  {
+    "id": "chg_fan_off",
+    "type": "change",
+    "z": "fan_tab",
+    "name": "Выключить вентилятор (OFF)",
+    "rules": [
+      {
+        "t": "set",
+        "p": "fan.state",
+        "pt": "msg",
+        "to": "OFF",
+        "tot": "str"
+      },
+      {
+        "t": "set",
+        "p": "fan.actuator_id",
+        "pt": "msg",
+        "to": "FAN-01",
+        "tot": "str"
+      },
+      {
+        "t": "set",
+        "p": "fan.zone",
+        "pt": "msg",
+        "to": "server_room",
+        "tot": "str"
+      },
+      {
+        "t": "set",
+        "p": "fan.mode",
+        "pt": "msg",
+        "to": "auto",
+        "tot": "str"
+      },
+      {
+        "t": "set",
+        "p": "fan.timestamp",
+        "pt": "msg",
+        "to": "$millis()",
+        "tot": "jsonata"
+      },
+      {
+        "t": "set",
+        "p": "payload",
+        "pt": "msg",
+        "to": "fan",
+        "tot": "msg"
+      },
+      {
+        "t": "set",
+        "p": "headers",
+        "pt": "msg",
+        "to": "{\"Content-Type\":\"application/json\"}",
+        "tot": "json"
+      }
+    ],
+    "action": "",
+    "property": "",
+    "from": "",
+    "to": "",
+    "reg": false,
+    "x": 800,
+    "y": 240,
+    "wires": [
+      [
+        "http_fan",
+        "dbg_fan_state"
+      ]
+    ]
+  },
+  {
+    "id": "http_fan",
+    "type": "http request",
+    "z": "fan_tab",
+    "name": "POST /api/actuators",
+    "method": "POST",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "http://192.168.40.10:8080/api/actuators",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "x": 1100,
+    "y": 120,
+    "wires": [
+      [
+        "dbg_fan_resp"
+      ]
+    ]
+  },
+  {
+    "id": "dbg_fan_state",
+    "type": "debug",
+    "z": "fan_tab",
+    "name": "состояние вентилятора",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": true,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "payload.state",
+    "statusType": "msg",
+    "x": 1120,
+    "y": 200,
+    "wires": []
+  },
+  {
+    "id": "dbg_fan_resp",
+    "type": "debug",
+    "z": "fan_tab",
+    "name": "ответ CTRL",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1080,
+    "y": 60,
+    "wires": []
   }
 ]
