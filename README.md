@@ -73,7 +73,9 @@ practice4/README.md                — описание ПР №4 (виртуа�
 practice4/ctrl/compose.yml         — приёмник показаний на CTRL-01 (порт 8080)
 practice4/ctrl/receiver.js         — код приёмника из раздаточных материалов
 practice4/iot/compose.yml          — Node-RED на IOT-01 (порт 1880)
-practice4/iot/flows.json           — поток с датчиками TEMP-01 и HUM-01
+practice4/iot/flows.json           — поток с датчиками TEMP-01 и HUM-01,
+                                     а также вкладка «Вентилятор FAN-01» (ПР №5)
+practice5/README.md                — описание ПР №5 (эмуляция вентилятора)
 docs/addresses.md                  — таблица адресации и портов
 docs/plan-office.plan              — план офиса (remplanner)
 docs/network-scheme.drawio         — логическая схема сети (draw.io)
@@ -82,6 +84,8 @@ docs/configs/                      — конфигурации узлов (ад
 evidence/                          — 14 скриншотов проверок ПР №3
 evidence4/                         — доказательства ПР №4: консольные проверки,
                                      лог приёмника, скриншот редактора Node-RED
+evidence5/                         — доказательства ПР №5: health приёмника v2,
+                                     журнал состояний вентилятора ON/OFF
 ```
 
 ## Виртуальные датчики (ПР №4)
@@ -98,6 +102,17 @@ evidence4/                         — доказательства ПР №4: �
 `http request` (`POST http://192.168.40.10:8080/api/readings`) → `debug`.
 Подробности запуска и проверки — в `practice4/README.md`.
 
+## Вентилятор FAN-01 (ПР №5)
+
+Вторая вкладка Node-RED — «Вентилятор FAN-01». Показание TEMP-01 сравнивается с порогом
+**30 °C** узлом `switch`; для каждого состояния свой узел `change` собирает объект `msg.fan`
+(`state`, `actuator_id` = `FAN-01`, `zone` = `server_room`, `mode` = `auto`, `timestamp`),
+который отправляется POST-запросом на `http://192.168.40.10:8080/api/actuators`.
+
+Приёмник обновлён до версии 2 (раздаточные материалы к ПР №5): `GET /health` отдаёт
+`{"status":"ok","version":2,"endpoints":["/api/readings","/api/actuators"]}`.
+Подробности — в `practice5/README.md`.
+
 ## Как проверял
 
 * ПР №1 — план и схема открываются в remplanner.ru и draw.io; таблица адресации сведена в `docs/addresses.md`.
@@ -109,3 +124,6 @@ evidence4/                         — доказательства ПР №4: �
   с WIN-01 по `http://192.168.50.10:1880`; оба датчика присылают показания каждые 5 секунд, приёмник
   пишет их в журнал (100 записей за ~4 минуты непрерывной работы, формат ответа `{"status":"ok","sensor_id":…,"value":…}`).
   Доказательства: `evidence4/01-ctrl-check.txt`, `evidence4/02-receiver-log.txt`, `evidence4/03-iot-check.txt`.
+* ПР №5 — приёмник v2 на CTRL-01 отвечает на `/api/actuators`; при температуре выше 30 °C узел
+  `switch` отправляет `fan.state = ON`, ниже — `OFF`; в журнале приёмника видны оба состояния
+  с интервалом 5 секунд. Доказательства: `evidence5/01-health.txt`, `evidence5/02-actuator-log.txt`.
