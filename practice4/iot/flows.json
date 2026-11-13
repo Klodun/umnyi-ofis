@@ -289,32 +289,7 @@
     "type": "tab",
     "label": "Вентилятор FAN-01",
     "disabled": false,
-    "info": "Задание №5. Показание TEMP-01 сравнивается с порогом 30 °C (switch). Если температура больше 30 — отдельный change собирает fan.state = ON, иначе второй change собирает fan.state = OFF. Объект fan уходит POST-запросом на приёмник CTRL-01 (/api/actuators)."
-  },
-  {
-    "id": "inj_fan_temp",
-    "type": "inject",
-    "z": "fan_tab",
-    "name": "TEMP-01 каждые 5 с",
-    "props": [
-      {
-        "p": "payload",
-        "v": "$round(25 + $random() * 10, 1)",
-        "vt": "jsonata"
-      }
-    ],
-    "repeat": "5",
-    "crontab": "",
-    "once": true,
-    "onceDelay": "1",
-    "topic": "",
-    "x": 200,
-    "y": 100,
-    "wires": [
-      [
-        "sw_fan"
-      ]
-    ]
+    "info": "Задание №5. Температура вводится вручную на панели Dashboard (http://192.168.50.10:1880/ui), узел switch сравнивает её с порогом 30 °C. Для каждого состояния свой change: собирает fan.state/actuator_id/zone/mode и отправляет POST на приёмник CTRL-01 (/api/actuators)."
   },
   {
     "id": "sw_fan",
@@ -420,7 +395,8 @@
     "wires": [
       [
         "http_fan",
-        "dbg_fan_state"
+        "dbg_fan_state",
+        "ui_state"
       ]
     ]
   },
@@ -497,7 +473,8 @@
     "wires": [
       [
         "http_fan",
-        "dbg_fan_state"
+        "dbg_fan_state",
+        "ui_state"
       ]
     ]
   },
@@ -556,6 +533,69 @@
     "statusType": "auto",
     "x": 1080,
     "y": 60,
+    "wires": []
+  },
+  {
+    "id": "ui_tab_fan",
+    "type": "ui_tab",
+    "name": "Вентилятор",
+    "icon": "dashboard",
+    "order": 1,
+    "disabled": false,
+    "hidden": false
+  },
+  {
+    "id": "ui_group_fan",
+    "type": "ui_group",
+    "name": "Управление вентилятором",
+    "tab": "ui_tab_fan",
+    "order": 1,
+    "disp": true,
+    "width": "6",
+    "collapse": false
+  },
+  {
+    "id": "ui_temp_in",
+    "type": "ui_text_input",
+    "z": "fan_tab",
+    "name": "Температура, °C",
+    "label": "Температура, °C",
+    "tooltip": "Введите число и нажмите Enter",
+    "group": "ui_group_fan",
+    "order": 1,
+    "width": 0,
+    "height": 0,
+    "passthru": false,
+    "mode": "number",
+    "delay": 0,
+    "topic": "temperature",
+    "topicType": "str",
+    "sendOnBlur": true,
+    "className": "",
+    "x": 220,
+    "y": 120,
+    "wires": [
+      [
+        "sw_fan"
+      ]
+    ]
+  },
+  {
+    "id": "ui_state",
+    "type": "ui_text",
+    "z": "fan_tab",
+    "name": "Состояние вентилятора",
+    "group": "ui_group_fan",
+    "order": 2,
+    "width": 0,
+    "height": 0,
+    "name2": "",
+    "label": "Вентилятор",
+    "format": "<b>{{msg.human}}</b>",
+    "layout": "row-spread",
+    "className": "",
+    "x": 1120,
+    "y": 300,
     "wires": []
   }
 ]
