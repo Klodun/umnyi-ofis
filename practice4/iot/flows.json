@@ -2,20 +2,20 @@
   {
     "id": "flow_tab_sensors",
     "type": "tab",
-    "label": "Виртуальные датчики",
+    "label": "Умный офис",
     "disabled": false,
-    "info": "ПР №4 + ПР №6. TEMP-01 (серверная) и HUM-01 (рабочая зона) каждые 5 секунд формируют показание и отправляют его ДВУМЯ параллельными POST-запросами: на приёмник CTRL-01 (http://192.168.40.10:8080/api/readings) и в хранилище БД-01 (http://192.168.40.12:8081/api/readings)."
+    "info": "Температура задаётся вручную: двойной клик по узлу «Температура, °C», вписать число, Done, Deploy, затем нажать квадратик слева от узла. Это значение уходит показанием TEMP-01 двумя POST-запросами (CTRL-01 :8080 и БД-01 :8081) и одновременно идёт в switch: выше 30 °C — вентилятор ON, иначе OFF (тоже в CTRL и БД). Влажность HUM-01 формируется автоматически каждые 5 с."
   },
   {
     "id": "inj_temp",
     "type": "inject",
     "z": "flow_tab_sensors",
-    "name": "TEMP-01 каждые 5 с",
+    "name": "Температура, °C",
     "props": [
       {
         "p": "payload",
-        "v": "$round(18 + $random() * 8, 1)",
-        "vt": "jsonata"
+        "v": "25",
+        "vt": "num"
       },
       {
         "p": "timestamp",
@@ -23,16 +23,17 @@
         "vt": "date"
       }
     ],
-    "repeat": "5",
+    "repeat": "",
     "crontab": "",
-    "once": true,
-    "onceDelay": "1",
+    "once": false,
+    "onceDelay": 0.1,
     "topic": "",
-    "x": 180,
-    "y": 120,
+    "x": 170,
+    "y": 160,
     "wires": [
       [
-        "chg_temp"
+        "chg_temp",
+        "sw_fan"
       ]
     ]
   },
@@ -97,8 +98,8 @@
     "from": "",
     "to": "",
     "reg": false,
-    "x": 450,
-    "y": 120,
+    "x": 480,
+    "y": 100,
     "wires": [
       [
         "http_temp",
@@ -121,8 +122,8 @@
     "insecureHTTPParser": false,
     "authType": "",
     "senderr": false,
-    "x": 720,
-    "y": 120,
+    "x": 800,
+    "y": 60,
     "wires": [
       [
         "dbg_temp"
@@ -142,8 +143,8 @@
     "targetType": "msg",
     "statusVal": "payload",
     "statusType": "auto",
-    "x": 980,
-    "y": 120,
+    "x": 1120,
+    "y": 60,
     "wires": []
   },
   {
@@ -168,8 +169,8 @@
     "once": true,
     "onceDelay": "1",
     "topic": "",
-    "x": 180,
-    "y": 260,
+    "x": 170,
+    "y": 560,
     "wires": [
       [
         "chg_hum"
@@ -237,8 +238,8 @@
     "from": "",
     "to": "",
     "reg": false,
-    "x": 450,
-    "y": 260,
+    "x": 480,
+    "y": 560,
     "wires": [
       [
         "http_hum",
@@ -261,8 +262,8 @@
     "insecureHTTPParser": false,
     "authType": "",
     "senderr": false,
-    "x": 720,
-    "y": 260,
+    "x": 800,
+    "y": 520,
     "wires": [
       [
         "dbg_hum"
@@ -282,21 +283,14 @@
     "targetType": "msg",
     "statusVal": "payload",
     "statusType": "auto",
-    "x": 980,
-    "y": 260,
+    "x": 1120,
+    "y": 520,
     "wires": []
-  },
-  {
-    "id": "fan_tab",
-    "type": "tab",
-    "label": "Вентилятор FAN-01",
-    "disabled": false,
-    "info": "ПР №5 + ПР №6. Температура задаётся в узле inject «Температура, °C»: двойной клик, вписать число, Done, Deploy, затем нажать квадратик слева от узла. Switch сравнивает значение с порогом 30 °C, каждый change собирает fan.state/actuator_id/zone/mode и отправляет POST на /api/actuators сразу в CTRL-01 (http://192.168.40.10:8080) и в БД-01 (http://192.168.40.12:8081)."
   },
   {
     "id": "sw_fan",
     "type": "switch",
-    "z": "fan_tab",
+    "z": "flow_tab_sensors",
     "name": "Температура > 30 °C",
     "property": "payload",
     "propertyType": "msg",
@@ -313,8 +307,8 @@
     "checkall": "true",
     "repair": false,
     "outputs": 2,
-    "x": 500,
-    "y": 180,
+    "x": 480,
+    "y": 300,
     "wires": [
       [
         "chg_fan_on"
@@ -327,7 +321,7 @@
   {
     "id": "chg_fan_on",
     "type": "change",
-    "z": "fan_tab",
+    "z": "flow_tab_sensors",
     "name": "Включить вентилятор (ON)",
     "rules": [
       {
@@ -393,7 +387,7 @@
     "to": "",
     "reg": false,
     "x": 800,
-    "y": 120,
+    "y": 260,
     "wires": [
       [
         "http_fan",
@@ -405,7 +399,7 @@
   {
     "id": "chg_fan_off",
     "type": "change",
-    "z": "fan_tab",
+    "z": "flow_tab_sensors",
     "name": "Выключить вентилятор (OFF)",
     "rules": [
       {
@@ -471,7 +465,7 @@
     "to": "",
     "reg": false,
     "x": 800,
-    "y": 240,
+    "y": 380,
     "wires": [
       [
         "http_fan",
@@ -483,7 +477,7 @@
   {
     "id": "http_fan",
     "type": "http request",
-    "z": "fan_tab",
+    "z": "flow_tab_sensors",
     "name": "POST /api/actuators",
     "method": "POST",
     "ret": "obj",
@@ -495,8 +489,8 @@
     "insecureHTTPParser": false,
     "authType": "",
     "senderr": false,
-    "x": 1100,
-    "y": 120,
+    "x": 1150,
+    "y": 240,
     "wires": [
       [
         "dbg_fan_resp"
@@ -506,7 +500,7 @@
   {
     "id": "dbg_fan_state",
     "type": "debug",
-    "z": "fan_tab",
+    "z": "flow_tab_sensors",
     "name": "состояние вентилятора",
     "active": true,
     "tosidebar": true,
@@ -516,14 +510,14 @@
     "targetType": "msg",
     "statusVal": "human",
     "statusType": "msg",
-    "x": 1120,
-    "y": 200,
+    "x": 1150,
+    "y": 440,
     "wires": []
   },
   {
     "id": "dbg_fan_resp",
     "type": "debug",
-    "z": "fan_tab",
+    "z": "flow_tab_sensors",
     "name": "ответ CTRL",
     "active": true,
     "tosidebar": true,
@@ -533,34 +527,9 @@
     "targetType": "msg",
     "statusVal": "",
     "statusType": "auto",
-    "x": 1080,
-    "y": 60,
+    "x": 1470,
+    "y": 240,
     "wires": []
-  },
-  {
-    "id": "inj_fan_manual",
-    "type": "inject",
-    "z": "fan_tab",
-    "name": "Температура, °C",
-    "props": [
-      {
-        "p": "payload",
-        "v": "35",
-        "vt": "num"
-      }
-    ],
-    "repeat": "",
-    "crontab": "",
-    "once": false,
-    "onceDelay": 0.1,
-    "topic": "",
-    "x": 240,
-    "y": 120,
-    "wires": [
-      [
-        "sw_fan"
-      ]
-    ]
   },
   {
     "id": "dbg_db_temp",
@@ -575,8 +544,8 @@
     "targetType": "msg",
     "statusVal": "",
     "statusType": "auto",
-    "x": 1000,
-    "y": 40,
+    "x": 1120,
+    "y": 140,
     "wires": []
   },
   {
@@ -594,8 +563,8 @@
     "insecureHTTPParser": false,
     "authType": "",
     "senderr": false,
-    "x": 720,
-    "y": 40,
+    "x": 800,
+    "y": 140,
     "wires": [
       [
         "dbg_db_temp"
@@ -615,8 +584,8 @@
     "targetType": "msg",
     "statusVal": "",
     "statusType": "auto",
-    "x": 1000,
-    "y": 340,
+    "x": 1120,
+    "y": 600,
     "wires": []
   },
   {
@@ -634,8 +603,8 @@
     "insecureHTTPParser": false,
     "authType": "",
     "senderr": false,
-    "x": 720,
-    "y": 340,
+    "x": 800,
+    "y": 600,
     "wires": [
       [
         "dbg_db_hum"
@@ -645,7 +614,7 @@
   {
     "id": "dbg_db_fan",
     "type": "debug",
-    "z": "fan_tab",
+    "z": "flow_tab_sensors",
     "name": "ответ БД (FAN-01)",
     "active": true,
     "tosidebar": true,
@@ -655,14 +624,14 @@
     "targetType": "msg",
     "statusVal": "",
     "statusType": "auto",
-    "x": 1400,
-    "y": 300,
+    "x": 1470,
+    "y": 360,
     "wires": []
   },
   {
     "id": "db_fan",
     "type": "http request",
-    "z": "fan_tab",
+    "z": "flow_tab_sensors",
     "name": "POST /api/actuators (БД)",
     "method": "POST",
     "ret": "obj",
@@ -674,8 +643,8 @@
     "insecureHTTPParser": false,
     "authType": "",
     "senderr": false,
-    "x": 1100,
-    "y": 300,
+    "x": 1150,
+    "y": 360,
     "wires": [
       [
         "dbg_db_fan"
