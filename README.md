@@ -137,7 +137,7 @@ evidence6/                         — доказательства ПР №6: c
 | Датчик | Зона | Единица | Как задаётся значение |
 |---|---|---|---|
 | TEMP-01 | server_room | °C | **вручную**: двойной клик по узлу `inject` «Температура, °C (повтор 5 с)», число, Done, Deploy; введённое значение повторяется каждые 5 с |
-| HUM-01 | work_area | % | автоматически каждые 5 секунд (случайное 35…60) |
+| HUM-01 | work_area | % | **вручную**: узел `inject` «Влажность, % (повтор 5 с)», число, Done, Deploy; повтор каждые 5 с |
 
 Цепочка в Node-RED: `inject` → `change` (сборка объекта `msg.reading`) →
 `http request` (`POST http://192.168.40.10:8080/api/readings`) → `debug`.
@@ -204,7 +204,8 @@ TEMP-01, и ветку вентилятора. Введённое значени
 * ПР №6 — на DB-01 установлен `sqlite3 3.40.0`, база `telemetry.sqlite3` создана вручную
   по `schema.sql`; контейнер `practice6-storage-1` — `Up (healthy)`, `GET /health` отдаёт
   `{"status":"ok","storage":"sqlite","version":2}`. Node-RED отправляет данные параллельно
-  приёмнику и в базу: в `measurements` больше 130 строк по `TEMP-01` и `HUM-01`, в
-  `actuator_events` — оба состояния (`ON` при 35 °C, `OFF` при 25 °C). Веб-интерфейс
+  приёмнику и в базу: оба датчика задаются вручную (35 °C и 45 %) и повторяются каждые 5 секунд,
+  в `measurements` больше 1100 строк по `TEMP-01` и `HUM-01`, в `actuator_events` — только
+  реальные переключения (`ON` при 35 °C, `OFF` при 25 °C). Веб-интерфейс
   `http://192.168.40.12:8081/` открывается с WIN-01. Доказательства: `evidence6/01-storage.txt`,
-  `evidence6/03-sql.txt`, `evidence6/05-flow-fan.png`, `evidence6/08-web-ui.png`.
+  `evidence6/04-manual-temp-sql.txt`, `evidence6/05-flow.png`, `evidence6/08-web-ui.png`.
