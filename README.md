@@ -106,6 +106,7 @@ compose.yml                        — Docker Compose для Nginx (ПР №3)
 practice4/README.md                — описание ПР №4 (виртуальные датчики)
 practice4/ctrl/compose.yml         — приёмник показаний на CTRL-01 (порт 8080)
 practice4/ctrl/receiver.js         — код приёмника (версия 2: /api/readings и /api/actuators)
+practice4/ctrl/view.sh             — вывод последних показаний на CTRL-01 в виде таблицы
 practice4/iot/compose.yml          — Node-RED на IOT-01 (порт 1880)
 practice4/iot/flows.json           — поток с датчиками TEMP-01 и HUM-01,
                                      а также вкладка «Вентилятор FAN-01» (ПР №5)

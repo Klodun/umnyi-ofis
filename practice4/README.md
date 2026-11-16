@@ -58,6 +58,54 @@ docker compose logs -f --tail=20 receiver
 
 Приёмник слушает `0.0.0.0:8080`, поэтому он доступен из VLAN 50 по адресу `192.168.40.10:8080`.
 
+## Как посмотреть показания на CTRL-01
+
+Приёмник ничего не хранит: он печатает каждое принятое показание в свой журнал. Отсюда три способа
+«отобразить» данные на CTRL.
+
+**1. Красивая таблица (скрипт `view.sh` из этой папки):**
+
+```bash
+sudo cp ~/practice4/ctrl/view.sh /root/practice4/ctrl/    # один раз, если файла ещё нет
+cd /root/practice4/ctrl
+sudo ./view.sh 12        # 12 последних строк; без числа — 20
+```
+
+Вывод:
+
+```
+время UTC  датчик    значение
+----------------------------------
+10:31:33   TEMP-01   29C
+10:31:33   HUM-01    45%
+10:31:38   TEMP-01   29C
+10:31:38   HUM-01    45%
+```
+
+**2. Живой журнал** (обновляется сам, выходить — `Ctrl+C`):
+
+```bash
+cd /root/practice4/ctrl
+sudo docker compose logs -f --tail=0 receiver
+```
+
+**3. Последние строки и сохранение в файл для отчёта:**
+
+```bash
+cd /root/practice4/ctrl
+sudo docker compose logs --no-color --tail=20 receiver
+sudo docker compose logs --no-color receiver > ~/practice4/receiver-log.txt
+```
+
+Строка журнала — это ровно то, что пришло от Node-RED:
+
+```json
+{"received_at":"2026-11-16T10:31:33.382Z","value":29,"sensor_id":"TEMP-01","zone":"server_room","timestamp":1794824993382,"unit":"C"}
+{"received_at":"2026-11-16T10:31:33.383Z","value":45,"sensor_id":"HUM-01","zone":"work_area","timestamp":1794824993383,"unit":"%"}
+```
+
+Если нужна история с графиком, а не журнал — она на DB-01: `http://192.168.40.12:8081/` (ПР №6).
+
 ## Запуск на IOT-01
 
 ```bash
