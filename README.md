@@ -62,7 +62,33 @@
 | Ethernet5 | IOT | 50 | access |
 | Ethernet0 | REDOS8-5 | 30, 40, 50 | trunk (dot1q) |
 
-## Состав репозитория
+## Состав репозитория и где что лежит
+
+### По работам
+
+| Работа | Что сдаётся | Файлы в репозитории | Доказательства |
+|---|---|---|---|
+| ПР №1 | план офиса, схема сети, таблица адресации | `docs/plan-office.plan`, `docs/network-scheme.drawio`, `docs/screens/`, `docs/addresses.md` | экспорт плана и схемы (PNG) |
+| ПР №2 | стенд GNS3, VLAN, связность | `docs/configs/`, `docs/screens/pr2-*.png` | скриншоты ping |
+| ПР №3 | Docker и Compose, Nginx, SSH/SCP | `compose.yml` (Nginx) | `evidence/` — 14 скриншотов |
+| ПР №4 | приёмник на CTRL, Node-RED на IOT, два датчика | `practice4/` | `evidence4/` |
+| ПР №5 | вентилятор FAN-01 по порогу 30 °C | `practice4/iot/flows.json` (вкладка «Вентилятор FAN-01»), `practice5/README.md` | `evidence5/` |
+
+### Docker Compose — где именно лежит
+
+В репозитории **три** compose-файла, каждый для своей задачи:
+
+| Файл | Что запускает | Куда кладётся на ВМ | Команда |
+|---|---|---|---|
+| `compose.yml` | Nginx из ПР №3, порт 8080 | `/root/nginx-test/` | `docker compose up -d` |
+| `practice4/ctrl/compose.yml` | приёмник показаний, порт 8080 | `/root/practice4/ctrl/` | `docker compose up -d` |
+| `practice4/iot/compose.yml` | Node-RED, порт 1880 | `/root/practice4/iot/` | `docker compose up -d` |
+
+> В раздаточных материалах к ПР №4 compose-файл приёмника называется `receiver.yml` — это тот же
+> файл, что `practice4/ctrl/compose.yml`; содержимое одинаковое, `docker compose` подхватывает его
+> и под именем `compose.yml`.
+
+### Полный список файлов
 
 ```
 README.md                          — этот файл
@@ -71,7 +97,7 @@ journal.md                         — журнал работ по дням
 compose.yml                        — Docker Compose для Nginx (ПР №3)
 practice4/README.md                — описание ПР №4 (виртуальные датчики)
 practice4/ctrl/compose.yml         — приёмник показаний на CTRL-01 (порт 8080)
-practice4/ctrl/receiver.js         — код приёмника из раздаточных материалов
+practice4/ctrl/receiver.js         — код приёмника (версия 2: /api/readings и /api/actuators)
 practice4/iot/compose.yml          — Node-RED на IOT-01 (порт 1880)
 practice4/iot/flows.json           — поток с датчиками TEMP-01 и HUM-01,
                                      а также вкладка «Вентилятор FAN-01» (ПР №5)
@@ -125,6 +151,7 @@ evidence5/                         — доказательства ПР №5: h
   с WIN-01 по `http://192.168.50.10:1880`; оба датчика присылают показания каждые 5 секунд, приёмник
   пишет их в журнал (100 записей за ~4 минуты непрерывной работы, формат ответа `{"status":"ok","sensor_id":…,"value":…}`).
   Доказательства: `evidence4/01-ctrl-check.txt`, `evidence4/02-receiver-log.txt`, `evidence4/03-iot-check.txt`.
-* ПР №5 — приёмник v2 на CTRL-01 отвечает на `/api/actuators`; при температуре выше 30 °C узел
-  `switch` отправляет `fan.state = ON`, ниже — `OFF`; в журнале приёмника видны оба состояния
-  с интервалом 5 секунд. Доказательства: `evidence5/01-health.txt`, `evidence5/02-actuator-log.txt`.
+* ПР №5 — приёмник v2 на CTRL-01 отвечает на `/api/actuators`; в узле inject задаётся температура,
+  узел `switch` сравнивает её с порогом 30 °C и отправляет `fan.state = ON` (выше порога) или `OFF`;
+  в журнале приёмника видны оба состояния. Доказательства: `evidence5/01-health.txt`,
+  `evidence5/02-actuator-log.txt`, `evidence5/03-flow.png`.

@@ -8,7 +8,7 @@
 
 | Требование | Где выполнено |
 |---|---|
-| Приёмник из раздаточных материалов установлен на CTRL через Docker Compose | `ctrl/compose.yml`, `ctrl/receiver.js` |
+| Приёмник из раздаточных материалов установлен на CTRL через Docker Compose | `ctrl/compose.yml`, `ctrl/receiver.js` (версия 2 — см. примечание в конце) |
 | Node-RED поднят на IOT через Docker Compose и открывается с WIN | `iot/compose.yml`, `http://192.168.50.10:1880` |
 | В Node-RED два готовых виртуальных датчика: температура и влажность | `iot/flows.json` |
 | Датчики сами отправляют показание каждые 5 секунд, CTRL его пишет | `evidence4/02-receiver-log.txt` |
