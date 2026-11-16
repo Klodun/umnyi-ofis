@@ -4,17 +4,17 @@
     "type": "tab",
     "label": "Умный офис",
     "disabled": false,
-    "info": "Температура задаётся вручную: двойной клик по узлу «Температура, °C», вписать число, Done, Deploy, затем нажать квадратик слева от узла. Это значение уходит показанием TEMP-01 двумя POST-запросами (CTRL-01 :8080 и БД-01 :8081) и одновременно идёт в switch: выше 30 °C — вентилятор ON, иначе OFF (тоже в CTRL и БД). Влажность HUM-01 формируется автоматически каждые 5 с."
+    "info": "Температура задаётся вручную: двойной клик по узлу «Температура, °C (повтор 5 с)», вписать число, Done, Deploy. Введённое значение повторяется каждые 5 секунд (случайности нет) и уходит показанием TEMP-01 в CTRL-01 (:8080) и БД-01 (:8081). То же значение идёт в switch: выше 30 °C — ON, иначе OFF; узел «только при изменении» пропускает событие вентилятора лишь при смене состояния, чтобы не засорять базу. Влажность HUM-01 формируется автоматически каждые 5 с."
   },
   {
     "id": "inj_temp",
     "type": "inject",
     "z": "flow_tab_sensors",
-    "name": "Температура, °C",
+    "name": "Температура, °C (повтор 5 с)",
     "props": [
       {
         "p": "payload",
-        "v": "25",
+        "v": "35",
         "vt": "num"
       },
       {
@@ -23,10 +23,10 @@
         "vt": "date"
       }
     ],
-    "repeat": "",
+    "repeat": "5",
     "crontab": "",
-    "once": false,
-    "onceDelay": 0.1,
+    "once": true,
+    "onceDelay": "1",
     "topic": "",
     "x": 170,
     "y": 160,
@@ -390,9 +390,7 @@
     "y": 260,
     "wires": [
       [
-        "http_fan",
-        "db_fan",
-        "dbg_fan_state"
+        "rbe_fan"
       ]
     ]
   },
@@ -468,9 +466,7 @@
     "y": 380,
     "wires": [
       [
-        "http_fan",
-        "db_fan",
-        "dbg_fan_state"
+        "rbe_fan"
       ]
     ]
   },
@@ -489,8 +485,8 @@
     "insecureHTTPParser": false,
     "authType": "",
     "senderr": false,
-    "x": 1150,
-    "y": 240,
+    "x": 1230,
+    "y": 260,
     "wires": [
       [
         "dbg_fan_resp"
@@ -510,8 +506,8 @@
     "targetType": "msg",
     "statusVal": "human",
     "statusType": "msg",
-    "x": 1150,
-    "y": 440,
+    "x": 1230,
+    "y": 460,
     "wires": []
   },
   {
@@ -527,8 +523,8 @@
     "targetType": "msg",
     "statusVal": "",
     "statusType": "auto",
-    "x": 1470,
-    "y": 240,
+    "x": 1500,
+    "y": 260,
     "wires": []
   },
   {
@@ -624,8 +620,8 @@
     "targetType": "msg",
     "statusVal": "",
     "statusType": "auto",
-    "x": 1470,
-    "y": 360,
+    "x": 1500,
+    "y": 380,
     "wires": []
   },
   {
@@ -643,11 +639,33 @@
     "insecureHTTPParser": false,
     "authType": "",
     "senderr": false,
-    "x": 1150,
-    "y": 360,
+    "x": 1230,
+    "y": 380,
     "wires": [
       [
         "dbg_db_fan"
+      ]
+    ]
+  },
+  {
+    "id": "rbe_fan",
+    "type": "rbe",
+    "z": "flow_tab_sensors",
+    "name": "только при изменении",
+    "func": "rbe",
+    "gap": "",
+    "start": "",
+    "inout": "out",
+    "property": "payload.state",
+    "top": true,
+    "bottom": false,
+    "x": 1000,
+    "y": 320,
+    "wires": [
+      [
+        "http_fan",
+        "db_fan",
+        "dbg_fan_state"
       ]
     ]
   }
