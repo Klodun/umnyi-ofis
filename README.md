@@ -76,16 +76,21 @@
 | ПР №3 | Docker и Compose, Nginx, SSH/SCP | `compose.yml` (Nginx) | `evidence/` — 14 скриншотов |
 | ПР №4 | приёмник на CTRL, Node-RED на IOT, два датчика | `practice4/` | `evidence4/` |
 | ПР №5 | вентилятор FAN-01 по порогу 30 °C | `practice4/iot/flows.json` (вкладка «Вентилятор FAN-01»), `practice5/README.md` | `evidence5/` |
+| ПР №6 | база данных SQLite, хранение показаний и событий | `practice6/` (четыре файла задания + `schema.sql`), `practice6/README.md` | `evidence6/` |
 
 ### Docker Compose — где именно лежит
 
-В репозитории **три** compose-файла, каждый для своей задачи:
+В репозитории **четыре** compose-файла, каждый для своей задачи:
 
 | Файл | Что запускает | Куда кладётся на ВМ | Команда |
 |---|---|---|---|
 | `compose.yml` | Nginx из ПР №3, порт 8080 | `/root/nginx-test/` | `docker compose up -d` |
 | `practice4/ctrl/compose.yml` | приёмник показаний, порт 8080 | `/root/practice4/ctrl/` | `docker compose up -d` |
 | `practice4/iot/compose.yml` | Node-RED, порт 1880 | `/root/practice4/iot/` | `docker compose up -d` |
+| `practice6/compose.yml` | сервис хранения в SQLite, порт 8081 | `/root/practice6/` | `docker compose up -d` |
+
+> ПР №6 — это `practice6/compose.yml` (сервис `storage`). Он **не** заменяет приёмник из ПР №4/№5:
+> данные идут в оба сервиса параллельно, поэтому порт у хранилища другой — 8081.
 
 > В раздаточных материалах к ПР №4 compose-файл приёмника называется `receiver.yml` — это тот же
 > файл, что `practice4/ctrl/compose.yml`; содержимое одинаковое, `docker compose` подхватывает его
@@ -105,6 +110,12 @@ practice4/iot/compose.yml          — Node-RED на IOT-01 (порт 1880)
 practice4/iot/flows.json           — поток с датчиками TEMP-01 и HUM-01,
                                      а также вкладка «Вентилятор FAN-01» (ПР №5)
 practice5/README.md                — описание ПР №5 (эмуляция вентилятора)
+practice6/compose.yml              — Docker Compose сервиса хранения на DB-01 (порт 8081)
+practice6/server.py                — HTTP-сервер: приём показаний и запись в SQLite
+practice6/index.html               — веб-интерфейс «История показаний»
+practice6/inspect_db.py            — скрипт проверки содержимого базы
+practice6/schema.sql               — схема БД (создаётся вручную до запуска контейнера)
+practice6/README.md                — описание ПР №6 (интеграция базы данных)
 docs/addresses.md                  — таблица адресации и портов
 docs/plan-office.plan              — план офиса (remplanner)
 docs/network-scheme.drawio         — логическая схема сети (draw.io)
@@ -115,6 +126,8 @@ evidence4/                         — доказательства ПР №4: �
                                      лог приёмника, скриншот редактора Node-RED
 evidence5/                         — доказательства ПР №5: health приёмника v2,
                                      журнал состояний вентилятора ON/OFF
+evidence6/                         — доказательства ПР №6: compose ps и health хранилища,
+                                     схема и SQL-выборки, скриншоты flow и веб-интерфейса
 ```
 
 ## Виртуальные датчики (ПР №4)
@@ -143,6 +156,29 @@ evidence5/                         — доказательства ПР №5: h
 `{"status":"ok","version":2,"endpoints":["/api/readings","/api/actuators"]}`.
 Подробности — в `practice5/README.md`.
 
+## Хранение в SQLite (ПР №6)
+
+На DB-01 работает третий сервис — хранилище на SQLite (`practice6/`). База создаётся **вручную**
+до запуска контейнера, потому что `server.py` только проверяет схему и ничего не создаёт:
+
+```bash
+sqlite3 data/telemetry.sqlite3 < schema.sql   # таблицы measurements и actuator_events
+docker compose up -d                          # сервис storage, порт 8081
+```
+
+Node-RED отправляет каждое показание и каждое состояние вентилятора **двумя** запросами
+с одного выхода `change`-узла: на приёмник CTRL-01 (`:8080`) и в хранилище DB-01 (`:8081`).
+Тело запроса у обоих адресатов одинаковое, поэтому второй `http request` просто подключается
+параллельно.
+
+| Таблица | Что хранит | Ключевые поля |
+|---|---|---|
+| `measurements` | числовые показания датчиков | `device_id`, `metric`, `zone`, `value`, `unit`, `timestamp`, `received_at` |
+| `actuator_events` | события исполнительных устройств | `device_id`, `state` (`ON`/`OFF`), `mode`, `timestamp`, `received_at` |
+
+Веб-интерфейс: `http://192.168.40.12:8081/` — история показаний, график, выгрузка CSV и копия базы.
+Подробное обоснование каждого шага — в `practice6/README.md`.
+
 ## Как проверял
 
 * ПР №1 — план и схема открываются в remplanner.ru и draw.io; таблица адресации сведена в `docs/addresses.md`.
@@ -158,3 +194,10 @@ evidence5/                         — доказательства ПР №5: h
   узел `switch` сравнивает её с порогом 30 °C и отправляет `fan.state = ON` (выше порога) или `OFF`;
   в журнале приёмника видны оба состояния. Доказательства: `evidence5/01-health.txt`,
   `evidence5/02-actuator-log.txt`, `evidence5/03-flow.png`.
+* ПР №6 — на DB-01 установлен `sqlite3 3.40.0`, база `telemetry.sqlite3` создана вручную
+  по `schema.sql`; контейнер `practice6-storage-1` — `Up (healthy)`, `GET /health` отдаёт
+  `{"status":"ok","storage":"sqlite","version":2}`. Node-RED отправляет данные параллельно
+  приёмнику и в базу: в `measurements` больше 130 строк по `TEMP-01` и `HUM-01`, в
+  `actuator_events` — оба состояния (`ON` при 35 °C, `OFF` при 25 °C). Веб-интерфейс
+  `http://192.168.40.12:8081/` открывается с WIN-01. Доказательства: `evidence6/01-storage.txt`,
+  `evidence6/03-sql.txt`, `evidence6/05-flow-fan.png`, `evidence6/08-web-ui.png`.

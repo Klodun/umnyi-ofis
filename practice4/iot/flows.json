@@ -4,7 +4,7 @@
     "type": "tab",
     "label": "Виртуальные датчики",
     "disabled": false,
-    "info": "TEMP-01 (серверная) и HUM-01 (рабочая зона) каждые 5 секунд формируют показание и отправляют его POST-запросом на приёмник CTRL-01 (http://192.168.40.10:8080/api/readings)."
+    "info": "ПР №4 + ПР №6. TEMP-01 (серверная) и HUM-01 (рабочая зона) каждые 5 секунд формируют показание и отправляют его ДВУМЯ параллельными POST-запросами: на приёмник CTRL-01 (http://192.168.40.10:8080/api/readings) и в хранилище БД-01 (http://192.168.40.12:8081/api/readings)."
   },
   {
     "id": "inj_temp",
@@ -101,7 +101,8 @@
     "y": 120,
     "wires": [
       [
-        "http_temp"
+        "http_temp",
+        "db_temp"
       ]
     ]
   },
@@ -240,7 +241,8 @@
     "y": 260,
     "wires": [
       [
-        "http_hum"
+        "http_hum",
+        "db_hum"
       ]
     ]
   },
@@ -289,7 +291,7 @@
     "type": "tab",
     "label": "Вентилятор FAN-01",
     "disabled": false,
-    "info": "Задание №5. Температура задаётся в узле inject «Температура, °C»: двойной клик, вписать число, Done, Deploy, затем нажать квадратик слева от узла. Switch сравнивает значение с порогом 30 °C, для каждого состояния свой change собирает fan.state/actuator_id/zone/mode и отправляет POST на /api/actuators."
+    "info": "ПР №5 + ПР №6. Температура задаётся в узле inject «Температура, °C»: двойной клик, вписать число, Done, Deploy, затем нажать квадратик слева от узла. Switch сравнивает значение с порогом 30 °C, каждый change собирает fan.state/actuator_id/zone/mode и отправляет POST на /api/actuators сразу в CTRL-01 (http://192.168.40.10:8080) и в БД-01 (http://192.168.40.12:8081)."
   },
   {
     "id": "sw_fan",
@@ -395,6 +397,7 @@
     "wires": [
       [
         "http_fan",
+        "db_fan",
         "dbg_fan_state"
       ]
     ]
@@ -472,6 +475,7 @@
     "wires": [
       [
         "http_fan",
+        "db_fan",
         "dbg_fan_state"
       ]
     ]
@@ -555,6 +559,126 @@
     "wires": [
       [
         "sw_fan"
+      ]
+    ]
+  },
+  {
+    "id": "dbg_db_temp",
+    "type": "debug",
+    "z": "flow_tab_sensors",
+    "name": "ответ БД (TEMP-01)",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1000,
+    "y": 40,
+    "wires": []
+  },
+  {
+    "id": "db_temp",
+    "type": "http request",
+    "z": "flow_tab_sensors",
+    "name": "POST /api/readings (БД)",
+    "method": "POST",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "http://192.168.40.12:8081/api/readings",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "x": 720,
+    "y": 40,
+    "wires": [
+      [
+        "dbg_db_temp"
+      ]
+    ]
+  },
+  {
+    "id": "dbg_db_hum",
+    "type": "debug",
+    "z": "flow_tab_sensors",
+    "name": "ответ БД (HUM-01)",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1000,
+    "y": 340,
+    "wires": []
+  },
+  {
+    "id": "db_hum",
+    "type": "http request",
+    "z": "flow_tab_sensors",
+    "name": "POST /api/readings (БД)",
+    "method": "POST",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "http://192.168.40.12:8081/api/readings",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "x": 720,
+    "y": 340,
+    "wires": [
+      [
+        "dbg_db_hum"
+      ]
+    ]
+  },
+  {
+    "id": "dbg_db_fan",
+    "type": "debug",
+    "z": "fan_tab",
+    "name": "ответ БД (FAN-01)",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "payload",
+    "targetType": "msg",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 1400,
+    "y": 300,
+    "wires": []
+  },
+  {
+    "id": "db_fan",
+    "type": "http request",
+    "z": "fan_tab",
+    "name": "POST /api/actuators (БД)",
+    "method": "POST",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "http://192.168.40.12:8081/api/actuators",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "insecureHTTPParser": false,
+    "authType": "",
+    "senderr": false,
+    "x": 1100,
+    "y": 300,
+    "wires": [
+      [
+        "dbg_db_fan"
       ]
     ]
   }
