@@ -175,8 +175,7 @@ sudo docker compose -f compose.yml ps > ~/practice4/ctrl-containers.txt
 | `evidence4/02-receiver-log.txt` | 100 записей приёмника: оба датчика каждые 5 секунд |
 | `evidence4/03-iot-check.txt` | IOT-01: адрес, версии, `compose ps`, ответ Node-RED, `POST`-проверка до CTRL |
 | `evidence4/04-iot-containers.txt` | `docker compose ps` на IOT-01 |
-| `evidence4/05-win-nodered-change.png` | редактор Node-RED, открытый на WIN-01: правила узла `change` |
-| `evidence4/06-win-nodered-editor.png` | WIN-01: браузер с открытым редактором `http://192.168.50.10:1880`, видны обе цепочки датчиков |
+| `evidence4/05-win-nodered-change.png` | редактор Node-RED, открытый на WIN-01: обе цепочки датчиков и правила узла `change` |
 
 > С ПР №5 приёмник обновлён до версии 2 (появился `POST /api/actuators`), а в `flows.json`
 > добавлена вкладка «Вентилятор FAN-01» — см. `../practice5/README.md`. Поток датчиков при этом

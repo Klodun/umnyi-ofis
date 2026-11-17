@@ -136,4 +136,3 @@ docker compose logs --tail=20 receiver
 |---|---|
 | `evidence5/01-health.txt` | `GET /health` — приёмник v2, оба эндпоинта |
 | `evidence5/02-actuator-log.txt` | журнал приёмника: переходы `ON` → `OFF` → `ON` |
-| `evidence5/03-flow.png` | схема в редакторе: inject «Температура, °C» → switch → change → POST |
