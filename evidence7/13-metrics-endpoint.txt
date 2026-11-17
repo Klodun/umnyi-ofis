@@ -1,0 +1,23 @@
+$ curl -s -o /dev/null -w "metrics http=%{http_code} time=%{time_total}\n" http://192.168.40.10:8080/metrics
+curl -s -o /dev/null -w "metrics http=%{http_code} time=%{time_total}\n" http://192.168.40.10:8080/metrics
+metrics http=200 time=0.002112
+[student@MON-01 ~]$ 
+$ curl -s http://192.168.40.10:8080/metrics | grep -E '^office_(temperature|humidity|sensor_age)' 
+curl -s http://192.168.40.10:8080/metrics | grep -E '^office_(temperature|humidity|sensor_age)' 
+office_temperature_celsius{sensor_id="TEMP-01",zone="server_room"} 29
+office_humidity_percent{sensor_id="HUM-01",zone="work_area"} 45
+office_sensor_age_seconds{sensor_id="TEMP-01"} 3.9030001163482666
+office_sensor_age_seconds{sensor_id="HUM-01"} 3.9019999504089355
+[student@MON-01 ~]$ 
+$ echo "=== targets ==="
+echo "=== targets ==="
+=== targets ===
+[student@MON-01 ~]$ 
+$ curl -s http://127.0.0.1:9090/api/v1/targets | tr ',' '\n' | grep -E '"(health|scrapeUrl|lastError|job)"'
+curl -s http://127.0.0.1:9090/api/v1/targets | tr ',' '\n' | grep -E '"(health|scrapeUrl|lastError|job)"'
+"job":"office-controller"}
+"job":"office-controller"}
+"scrapeUrl":"http://192.168.40.10:8080/metrics"
+"lastError":""
+"health":"up"
+[student@MON-01 ~]$ 

@@ -33,9 +33,11 @@
 | ПР №4 | приёмник на CTRL, Node-RED, два датчика | `practice4/` | `evidence4/` |
 | ПР №5 | вентилятор FAN-01 по порогу 30 °C | `practice4/iot/flows.json` | `evidence5/` |
 | ПР №6 | хранение показаний в SQLite | `practice6/` | `evidence6/` |
+| ПР №7 | мониторинг Prometheus и Grafana, оповещения | `practice7/` | `evidence7/` |
 
 Подробности по работам — в [practice4/README.md](practice4/README.md),
-[practice5/README.md](practice5/README.md), [practice6/README.md](practice6/README.md).
+[practice5/README.md](practice5/README.md), [practice6/README.md](practice6/README.md),
+[practice7/README.md](practice7/README.md).
 
 ## Запуск
 
@@ -55,6 +57,8 @@ cd /root/practice6 && sqlite3 data/telemetry.sqlite3 < schema.sql && docker comp
 | Node-RED — задать температуру и влажность | `http://192.168.50.10:1880` |
 | История показаний (график, CSV, копия базы) | `http://192.168.40.12:8081/` |
 | Показания на CTRL-01 | `cd /root/practice4/ctrl && sudo ./view.sh 12` |
+| Prometheus — цели и метрики | `http://192.168.40.11:9090/targets` |
+| Grafana — панель мониторинга и оповещения | `http://192.168.40.11:3000/` |
 
 ## Как устроено
 
@@ -70,6 +74,12 @@ cd /root/practice6 && sqlite3 data/telemetry.sqlite3 < schema.sql && docker comp
 `measurements` (показания) и `actuator_events` (события вентилятора). Схема создаётся вручную
 файлом `schema.sql` — сервис её только проверяет. Веб-интерфейс — `index.html`.
 
+**Мониторинг (ПР №7).** На MON-01 Prometheus и Grafana установлены как системные службы.
+Prometheus каждые 5 секунд опрашивает `http://192.168.40.10:8080/metrics` (задача
+`office-controller`), Grafana показывает панель преподавателя и следит за возрастом показаний:
+если датчик молчит дольше 20 секунд при живом CTRL-01, правило уходит в Alerting и пишет
+письмо на контакт Email. Пропажа самого CTRL-01 отслеживается отдельным правилом по `up`.
+
 ## Как проверял
 
 * ПР №1–2 — план и схема открываются в remplanner.ru и draw.io; с WIN-01 проходят ping
@@ -82,3 +92,8 @@ cd /root/practice6 && sqlite3 data/telemetry.sqlite3 < schema.sql && docker comp
 * ПР №6 — `sqlite3 3.40.0` на DB-01, контейнер `practice6-storage-1` в состоянии `healthy`,
   в базе больше 1100 показаний и только реальные переключения вентилятора; страница
   `http://192.168.40.12:8081/` показывает те же значения, что и журнал CTRL-01.
+* ПР №7 — `promtool` принимает конфигурацию, цель `office-controller` в состоянии UP;
+  на панели видны 38 °C, 45 %, ON, AUTO и возраст показаний около секунды; после остановки
+  TEMP-01 возраст вырос до 60 с, HUM продолжал обновляться, правило TEMP-01 стало Alerting
+  и письмо пришло в ящик `grafana-alerts`; после остановки CTRL-01 цель стала DOWN, а значения
+  датчиков исчезли с панели вместо показа последних известных.

@@ -29,6 +29,14 @@ default via 192.168.40.1 dev enp2s0 proto static metric 100
 192.168.40.0/26 dev enp2s0 proto kernel scope link src 192.168.40.11 metric 100
 ```
 
+Службы ПР №7 (обе включены в автозагрузку):
+
+```
+prometheus.service   active/enabled   :9090   конфигурация /etc/prometheus/prometheus.yml
+grafana-server.service active/enabled :3000   SMTP через drop-in grafana-smtp.conf
+postfix.service      active           :25     локальный ящик grafana-alerts
+```
+
 ## DB-01 — сервер БД (РЕД ОС 8)
 
 ```

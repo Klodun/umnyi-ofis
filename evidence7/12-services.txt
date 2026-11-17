@@ -1,0 +1,25 @@
+$ echo student | sudo -S systemctl enable --now prometheus 2>&1 | tail -2
+echo student | sudo -S systemctl enable --now prometheus 2>&1 | tail -2
+[student@MON-01 ~]$ 
+$ echo student | sudo -S systemctl enable --now grafana-server 2>&1 | tail -2
+echo student | sudo -S systemctl enable --now grafana-server 2>&1 | tail -2
+Created symlink /etc/systemd/system/multi-user.target.wants/grafana-server.service → /usr/lib/systemd/system/grafana-server.service.
+[student@MON-01 ~]$ 
+$ sleep 6
+sleep 6
+[student@MON-01 ~]$ 
+$ systemctl is-enabled prometheus grafana-server
+systemctl is-enabled prometheus grafana-server
+enabled
+enabled
+[student@MON-01 ~]$ 
+$ systemctl is-active prometheus grafana-server
+systemctl is-active prometheus grafana-server
+active
+active
+[student@MON-01 ~]$ 
+$ ss -ltn | grep -E ':(9090|3000)'
+ss -ltn | grep -E ':(9090|3000)'
+LISTEN 0      4096               *:3000            *:*          
+LISTEN 0      4096               *:9090            *:*          
+[student@MON-01 ~]$ 

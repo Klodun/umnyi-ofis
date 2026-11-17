@@ -1,0 +1,23 @@
+
+[student@MON-01 ~]$ 
+$ sleep 35
+sleep 35
+[student@MON-01 ~]$ 
+$ python3 /tmp/metrics_report.py
+python3 /tmp/metrics_report.py
+up{id=office-controller} = 1
+office_temperature_celsius{id=TEMP-01} = 38
+office_humidity_percent{id=HUM-01} = 45
+office_fan_on{id=FAN-01} = NaN
+office_control_mode_auto{id=FAN-01} = NaN
+office_sensor_last_reading_timestamp_seconds{id=HUM-01} = 1794916633.209
+office_sensor_last_reading_timestamp_seconds{id=TEMP-01} = 1794916633.208
+office_sensor_age_seconds{id=HUM-01} = 0.4630000591278076
+office_sensor_age_seconds{id=TEMP-01} = 0.4650001525878906
+[student@MON-01 ~]$ 
+$ curl -s -u admin:admin "http://127.0.0.1:3000/api/prometheus/grafana/api/v1/rules" | python3 -c "import json,sys; d=json.load(sys.stdin); [print(r['name'], '|', r['state']) for g in d['data']['groups'] for r in g['rules']]"
+curl -s -u admin:admin "http://127.0.0.1:3000/api/prometheus/grafana/api/v1/rules" | python3 -c "import json,sys; d=json.load(sys.stdin); [print(r['name'], '|', r['state']) for g in d['data']['groups'] for r in g['rules']]"
+TEMP-01 нет новых показаний | inactive
+HUM-01 нет новых показаний | inactive
+CTRL-01 недоступен | inactive
+[student@MON-01 ~]$ 

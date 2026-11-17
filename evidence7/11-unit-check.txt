@@ -1,0 +1,24 @@
+$ ls -l /usr/bin/prometheus /usr/bin/promtool
+ls -l /usr/bin/prometheus /usr/bin/promtool
+-rwxr-xr-x 1 root root 108954240 ��� 29  2024 /usr/bin/prometheus
+-rwxr-xr-x 1 root root 103481616 ��� 29  2024 /usr/bin/promtool
+[student@MON-01 ~]$ 
+$ getent passwd prometheus
+getent passwd prometheus
+prometheus:x:900:900:Prometheus:/var/lib/prometheus:/usr/sbin/nologin
+[student@MON-01 ~]$ 
+$ ls -ld /var/lib/prometheus
+ls -ld /var/lib/prometheus
+drwxr-xr-x 2 prometheus prometheus 4096 ��� 29  2024 /var/lib/prometheus
+[student@MON-01 ~]$ 
+$ echo student | sudo -S -u prometheus test -w /var/lib/prometheus && echo "prometheus can write data dir: yes"
+echo student | sudo -S -u prometheus test -w /var/lib/prometheus && echo "prometheus can write data dir: yes"
+prometheus can write data dir: yes
+[student@MON-01 ~]$ 
+$ grep -E '^(User|Group|ExecStart|WantedBy)' /usr/lib/systemd/system/prometheus.service
+grep -E '^(User|Group|ExecStart|WantedBy)' /usr/lib/systemd/system/prometheus.service
+User=prometheus
+Group=prometheus
+ExecStart=/usr/bin/prometheus \
+WantedBy=multi-user.target
+[student@MON-01 ~]$ 

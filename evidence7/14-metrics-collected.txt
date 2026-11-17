@@ -1,0 +1,14 @@
+
+[student@MON-01 ~]$ 
+$ python3 /tmp/metrics_report.py
+python3 /tmp/metrics_report.py
+up{id=office-controller} = 1
+office_temperature_celsius{id=TEMP-01} = 38
+office_humidity_percent{id=HUM-01} = 45
+office_fan_on{id=FAN-01} = 1
+office_control_mode_auto{id=FAN-01} = 1
+office_sensor_last_reading_timestamp_seconds{id=HUM-01} = 1794916672.534
+office_sensor_last_reading_timestamp_seconds{id=TEMP-01} = 1794916672.534
+office_sensor_age_seconds{id=HUM-01} = 1.1339998245239258
+office_sensor_age_seconds{id=TEMP-01} = 1.1369998455047607
+[student@MON-01 ~]$ 

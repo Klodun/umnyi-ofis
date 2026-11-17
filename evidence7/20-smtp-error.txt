@@ -1,0 +1,50 @@
+
+[student@MON-01 ~]$ 
+$ echo student | sudo -S journalctl -u grafana-server --since "-6min" --no-pager | grep -iE "notif|smtp|email|error" | tail -20
+echo student | sudo -S journalctl -u grafana-server --since "-6min" --no-pager | grep -iE "notif|smtp|email|error" | tail -20
+ноя 17 14:46:56 MON-01 grafana[1091]: logger=ngalert.notifier.alertmanager 1=(MISSING) t=2026-11-17T14:46:56.690971468+03:00 level=error component=alertmanager orgID=1 component=dispatcher msg="Notify for alerts failed" num_alerts=1 err="Email/email[0]: notify retry canceled due to unrecoverable error after 1 attempts: failed to send notification to email addresses: grafana-alerts@MON-01.localdomain: tls: failed to verify certificate: x509: certificate is not valid for any names, but wanted to match localhost"
+ноя 17 14:47:00 MON-01 grafana[1091]: logger=ngalert.sender.router rule_uid=office-temp-age org_id=1 t=2026-11-17T14:47:00.011476815+03:00 level=info msg="Sending alerts to local notifier" count=1
+ноя 17 14:47:03 MON-01 grafana[1091]: logger=ngalert.sender.router rule_uid=office-hum-age org_id=1 t=2026-11-17T14:47:03.342542878+03:00 level=info msg="Sending alerts to local notifier" count=1
+ноя 17 14:47:20 MON-01 grafana[1091]: logger=ngalert.notifier.alertmanager 1=(MISSING) t=2026-11-17T14:47:20.053797463+03:00 level=error component=alertmanager orgID=1 component=dispatcher msg="Notify for alerts failed" num_alerts=1 err="Email/email[0]: notify retry canceled due to unrecoverable error after 1 attempts: failed to send notification to email addresses: grafana-alerts@MON-01.localdomain: tls: failed to verify certificate: x509: certificate is not valid for any names, but wanted to match localhost"
+ноя 17 14:47:26 MON-01 grafana[1091]: logger=ngalert.notifier.alertmanager 1=(MISSING) t=2026-11-17T14:47:26.691199806+03:00 level=error component=alertmanager orgID=1 component=dispatcher msg="Notify for alerts failed" num_alerts=1 err="Email/email[0]: notify retry canceled due to unrecoverable error after 1 attempts: failed to send notification to email addresses: grafana-alerts@MON-01.localdomain: tls: failed to verify certificate: x509: certificate is not valid for any names, but wanted to match localhost"
+ноя 17 14:47:40 MON-01 grafana[1091]: logger=ngalert.sender.router rule_uid=office-temp-age org_id=1 t=2026-11-17T14:47:40.009901423+03:00 level=info msg="Sending alerts to local notifier" count=1
+ноя 17 14:47:43 MON-01 grafana[1091]: logger=ngalert.sender.router rule_uid=office-hum-age org_id=1 t=2026-11-17T14:47:43.343235705+03:00 level=info msg="Sending alerts to local notifier" count=1
+ноя 17 14:47:50 MON-01 grafana[1091]: logger=ngalert.notifier.alertmanager 1=(MISSING) t=2026-11-17T14:47:50.054208812+03:00 level=error component=alertmanager orgID=1 component=dispatcher msg="Notify for alerts failed" num_alerts=1 err="Email/email[0]: notify retry canceled due to unrecoverable error after 1 attempts: failed to send notification to email addresses: grafana-alerts@MON-01.localdomain: tls: failed to verify certificate: x509: certificate is not valid for any names, but wanted to match localhost"
+ноя 17 14:47:56 MON-01 grafana[1091]: logger=ngalert.notifier.alertmanager 1=(MISSING) t=2026-11-17T14:47:56.69113678+03:00 level=error component=alertmanager orgID=1 component=dispatcher msg="Notify for alerts failed" num_alerts=1 err="Email/email[0]: notify retry canceled due to unrecoverable error after 1 attempts: failed to send notification to email addresses: grafana-alerts@MON-01.localdomain: tls: failed to verify certificate: x509: certificate is not valid for any names, but wanted to match localhost"
+ноя 17 14:47:58 MON-01 grafana[1091]: logger=plugin.pcp-redis-datasource t=2026-11-17T14:47:58.435026133+03:00 level=error msg="plugin process exited" plugin=/var/lib/grafana/plugins/performancecopilot-pcp-app/datasources/redis/pcp_redis_datasource_linux_amd64 id=1099 error="signal: terminated"
+ноя 17 14:47:58 MON-01 grafana[1147]: logger=settings t=2026-11-17T14:47:58.663633909+03:00 level=info msg="Config overridden from Environment variable" var="GF_SMTP_ENABLED=true"
+ноя 17 14:47:58 MON-01 grafana[1147]: logger=settings t=2026-11-17T14:47:58.663649036+03:00 level=info msg="Config overridden from Environment variable" var="GF_SMTP_HOST=localhost:25"
+ноя 17 14:47:58 MON-01 grafana[1147]: logger=settings t=2026-11-17T14:47:58.663664447+03:00 level=info msg="Config overridden from Environment variable" var="GF_SMTP_FROM_ADDRESS=grafana@MON-01.localdomain"
+ноя 17 14:47:58 MON-01 grafana[1147]: logger=settings t=2026-11-17T14:47:58.663677873+03:00 level=info msg="Config overridden from Environment variable" var="GF_SMTP_FROM_NAME=Grafana"
+ноя 17 14:48:03 MON-01 grafana[1147]: logger=ngalert.sender.router rule_uid=office-temp-age org_id=1 t=2026-11-17T14:48:03.344831635+03:00 level=info msg="Sending alerts to local notifier" count=1
+ноя 17 14:48:06 MON-01 grafana[1147]: logger=ngalert.sender.router rule_uid=office-hum-age org_id=1 t=2026-11-17T14:48:06.688985812+03:00 level=info msg="Sending alerts to local notifier" count=1
+ноя 17 14:49:40 MON-01 grafana[1147]: logger=ngalert.sender.router rule_uid=office-temp-age org_id=1 t=2026-11-17T14:49:40.009247267+03:00 level=info msg="Sending alerts to local notifier" count=1
+ноя 17 14:49:50 MON-01 grafana[1147]: logger=ngalert.notifier.alertmanager 1=(MISSING) t=2026-11-17T14:49:50.045192684+03:00 level=error component=alertmanager orgID=1 component=dispatcher msg="Notify for alerts failed" num_alerts=1 err="Email/email[0]: notify retry canceled due to unrecoverable error after 1 attempts: failed to send notification to email addresses: grafana-alerts@MON-01.localdomain: tls: failed to verify certificate: x509: certificate is not valid for any names, but wanted to match localhost"
+ноя 17 14:50:20 MON-01 grafana[1147]: logger=ngalert.sender.router rule_uid=office-temp-age org_id=1 t=2026-11-17T14:50:20.00918657+03:00 level=info msg="Sending alerts to local notifier" count=1
+ноя 17 14:50:20 MON-01 grafana[1147]: logger=ngalert.notifier.alertmanager 1=(MISSING) t=2026-11-17T14:50:20.020692094+03:00 level=error component=alertmanager orgID=1 component=dispatcher msg="Notify for alerts failed" num_alerts=1 err="Email/email[0]: notify retry canceled due to unrecoverable error after 1 attempts: failed to send notification to email addresses: grafana-alerts@MON-01.localdomain: tls: failed to verify certificate: x509: certificate is not valid for any names, but wanted to match localhost"
+[student@MON-01 ~]$ 
+$ echo "=== mailq ==="
+echo "=== mailq ==="
+=== mailq ===
+[student@MON-01 ~]$ 
+$ echo student | sudo -S mailq 2>&1 | tail -5
+echo student | sudo -S mailq 2>&1 | tail -5
+Mail queue is empty
+[student@MON-01 ~]$ 
+$ echo "=== postfix log ==="
+echo "=== postfix log ==="
+=== postfix log ===
+[student@MON-01 ~]$ 
+$ echo student | sudo -S journalctl -u postfix --since "-6min" --no-pager | tail -10
+echo student | sudo -S journalctl -u postfix --since "-6min" --no-pager | tail -10
+ноя 17 14:49:50 MON-01 postfix/smtpd[1177]: connect from localhost[::1]
+ноя 17 14:49:50 MON-01 postfix/smtpd[1177]: SSL_accept error from localhost[::1]: -1
+ноя 17 14:49:50 MON-01 postfix/smtpd[1177]: warning: TLS library problem: error:0A000412:SSL routines::ssl/tls alert bad certificate:ssl/record/rec_layer_s3.c:918:SSL alert number 42:
+ноя 17 14:49:50 MON-01 postfix/smtpd[1177]: NOQUEUE: lost connection after STARTTLS from localhost[::1]
+ноя 17 14:49:50 MON-01 postfix/smtpd[1177]: disconnect from localhost[::1] ehlo=1 starttls=0/1 commands=1/2
+ноя 17 14:50:20 MON-01 postfix/smtpd[1177]: connect from localhost[::1]
+ноя 17 14:50:20 MON-01 postfix/smtpd[1177]: SSL_accept error from localhost[::1]: -1
+ноя 17 14:50:20 MON-01 postfix/smtpd[1177]: warning: TLS library problem: error:0A000412:SSL routines::ssl/tls alert bad certificate:ssl/record/rec_layer_s3.c:918:SSL alert number 42:
+ноя 17 14:50:20 MON-01 postfix/smtpd[1177]: NOQUEUE: lost connection after STARTTLS from localhost[::1]
+ноя 17 14:50:20 MON-01 postfix/smtpd[1177]: disconnect from localhost[::1] ehlo=1 starttls=0/1 commands=1/2
+[student@MON-01 ~]$ 

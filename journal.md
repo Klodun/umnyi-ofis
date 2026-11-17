@@ -1,4 +1,4 @@
-﻿# Журнал работ
+# Журнал работ
 
 ## 09.11.2026 (отчёт №1)
 
@@ -167,3 +167,106 @@
   `docs/configs/*.txt` свёл в один `docs/configs.md`. README переписал коротко: цель, стенд,
   таблица работ, запуск, краткое устройство и проверка — подробности остались в `practiceN/README.md`.
 - **Итог:** было 66 файлов, стало 46; README сократился примерно втрое.
+
+## 17.11 — Практическая работа №7: мониторинг Prometheus и Grafana
+
+### Установка служб на MON-01
+
+- **Что сделал:** нашёл пакеты в репозитории РЕД ОС: Prometheus лежит в `golang-github-prometheus`
+  (2.49.1, вместе с `promtool`), Grafana — в `grafana` (10.3.3). Поставил их с `grafana-selinux`,
+  включил автозагрузку: `systemctl enable --now prometheus grafana-server`.
+  Docker Compose для мониторинга не использовал — так требует задание.
+- **Как проверил:** `systemctl is-enabled` и `is-active` дают `enabled` и `active`, порты
+  9090 и 3000 слушают; оба интерфейса открываются с WIN-01.
+  Доказательства: `evidence7/12-services.txt`, `evidence7/02-prometheus-targets.png`.
+
+### Приёмник CTRL обновлён до версии 3
+
+- **Что сделал:** сохранил старый приёмник как `receiver.js.v2.bak`, поставил выданный
+  `receiver.js` (в нём появился `/metrics` с восемью метриками) и перезапустил контейнер.
+  Прежние адреса `/api/readings` и `/api/actuators` остались рабочими, поэтому отправка
+  на CTRL и в SQLite не прерывалась.
+- **Как проверил:** `/health` отвечает `version: 3`, `/metrics` отдаёт `office_temperature_celsius`,
+  `office_humidity_percent` и `office_sensor_age_seconds`; с MON-01 запрос к `/metrics`
+  возвращает `200` за 2 мс. Доказательство: `evidence7/13-metrics-endpoint.txt`.
+
+### Своя конфигурация Prometheus
+
+- **Что сделал:** написал `practice7/prometheus.yml` сам: задача `office-controller`, цель
+  `192.168.40.10:8080`, путь `/metrics`, сбор каждые 5 секунд, таймаут 4 секунды (меньше
+  интервала, чтобы опросы не накладывались). Проверил `promtool check config` — `SUCCESS`.
+- **Как проверил:** в Prometheus цель `office-controller` в состоянии UP, последний сбор
+  без ошибки; метрики температуры, влажности, режима, состояния вентилятора и времени
+  последнего показания видны в запросах. Доказательства: `evidence7/10-promtool.txt`,
+  `evidence7/02-prometheus-targets.png`, `evidence7/14-metrics-collected.txt`.
+
+### Модуль systemd и права на каталог данных
+
+- **Что сделал:** установил модуль `prometheus.service` из пакета и проверил то, что в нём
+  указано: `ExecStart=/usr/bin/prometheus` (файл есть, права `-rwxr-xr-x`), `User=prometheus`
+  (пользователь uid 900), каталог данных `/var/lib/prometheus` принадлежит
+  `prometheus:prometheus` и доступен на запись, `WantedBy=multi-user.target`.
+- **Как проверил:** `sudo -u prometheus test -w /var/lib/prometheus` — запись разрешена.
+  Доказательство: `evidence7/11-unit-check.txt`.
+
+### Источник данных и панель Grafana
+
+- **Что сделал:** положил провижининг `datasource.yml` с UID `prometheus-office` (именно этот UID
+  ищет панель преподавателя) и импортировал `dashboard_teacher.json` через API Grafana.
+  Панель открылась на десяти панелях, правил оповещения в ней нет — они лежат отдельно.
+- **Как проверил:** на панели «ДОСТУПНО», 38 °C, 45 %, ON, AUTO, возраст показаний около секунды,
+  время показания по часам датчика. Доказательства: `evidence7/01-grafana-dashboard.png`,
+  `evidence7/03-grafana-charts.png`, `practice7/dashboard-export.json`.
+
+### Ручное изменение температуры
+
+- **Что сделал:** поменял значение ручного `inject` температуры с 29 на 38 °C через Admin API
+  Node-RED (`practice7/set_sensor.py`), логику вентилятора не трогал. При 38 °C вентилятор
+  включился сам, потому что порог 30 °C остался прежним.
+- **Как проверил:** на панели температура сменилась на 38 °C, вентилятор стал ON, режим AUTO;
+  в графике видно ступеньку и провал до 25 °C при обратной проверке.
+  Доказательства: `evidence7/01-grafana-dashboard.png`, `evidence7/03-grafana-charts.png`.
+
+### Правила оповещения
+
+- **Что сделал:** три правила в `practice7/rules.yml`: «TEMP-01 нет новых показаний»,
+  «HUM-01 нет новых показаний» и отдельное «CTRL-01 недоступен». Первые два срабатывают, когда
+  `office_sensor_age_seconds` больше 20 секунд при `up = 1`; третье — когда `up` меньше единицы.
+  Проверка группы каждые 10 секунд, `for: 0s` (Pending 0), состояние «нет данных» не считается
+  аварией датчика.
+- **Почему возраст не сравнивается прямо в запросе:** при `age > 20` в запросе при нормальной
+  работе возвращается пустой вектор, и Grafana показывает «нет данных» вместо «нормы» — тогда
+  пропажу датчика не отличить от пропажи CTRL. Поэтому запрос отдаёт сам возраст, а порог
+  `> 20` задан узлом Threshold.
+- **Как проверил:** штатно все три правила в состоянии Normal (`3 normal`);
+  при остановленной отправке TEMP-01 — `1 firing` у TEMP-01 и Normal у HUM-01 и CTRL-01.
+  Доказательства: `evidence7/04-grafana-alerts-normal.png`,
+  `evidence7/05-grafana-alerts-firing.png`, `practice7/alert-rules-export.json`.
+
+### SMTP и контакт Email
+
+- **Что сделал:** поднял на MON-01 локальный ящик `grafana-alerts` (postfix уже был запущен),
+  включил SMTP у Grafana через drop-in `grafana-smtp.conf` (`GF_SMTP_*`), создал контакт
+  `Email` и привязал его политикой оповещений. Паролей в репозитории нет.
+- **Ошибка доставки и её причина:** первый запуск падал с
+  `x509: certificate is not valid for any names, but wanted to match localhost` — postfix
+  отдаёт самоподписанный сертификат, а Grafana проверяла его. Добавил
+  `GF_SMTP_SKIP_VERIFY=true`, после чего письмо `[FIRING:1] TEMP-01 нет новых показаний`
+  дошло до ящика. Доказательства: `evidence7/20-smtp-error.txt`,
+  `evidence7/21-smtp-fixed.txt`, `evidence7/22-alert-mail.txt`,
+  `evidence7/06-grafana-contacts.png`.
+
+### Проверка пропажи датчика и пропажи CTRL
+
+- **TEMP-01:** остановил только периодическую отправку температуры (`set_sensor.py inj_temp 38 ''`).
+  Через 40 секунд: цель UP, возраст TEMP-01 — 60 с, возраст HUM-01 — 0,16 с, правило TEMP-01
+  Alerting. Вернул отправку — правило стало Normal, пришло письмо о восстановлении.
+- **HUM-01:** то же самое для влажности: возраст HUM-01 вырос до 50 с, TEMP-01 обновлялся,
+  правило HUM-01 стало Alerting, TEMP-01 осталось Normal.
+- **CTRL-01:** остановил контейнер приёмника. Цель стала DOWN с ошибкой
+  `connect: connection refused`, все метрики датчиков пропали из Prometheus (на панели «Нет данных»,
+  а не последние известные значения), сработало отдельное правило «CTRL-01 недоступен»,
+  а правила датчиков остались Normal. После запуска контейнера всё вернулось в норму.
+- Доказательства: `evidence7/15-temp-alert-firing.txt`, `evidence7/16-temp-normal.txt`,
+  `evidence7/17-hum-alert-firing.txt`, `evidence7/18-ctrl-down.txt`,
+  `evidence7/19-ctrl-recovered.txt`.

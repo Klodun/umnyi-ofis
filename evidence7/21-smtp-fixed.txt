@@ -1,0 +1,27 @@
+
+[student@MON-01 ~]$ 
+$ echo student | sudo -S install -o root -g root -m 0644 /tmp/grafana-smtp.conf /etc/systemd/system/grafana-server.service.d/smtp.conf
+echo student | sudo -S install -o root -g root -m 0644 /tmp/grafana-smtp.conf /etc/systemd/system/grafana-server.service.d/smtp.conf
+[student@MON-01 ~]$ 
+$ echo student | sudo -S systemctl daemon-reload
+echo student | sudo -S systemctl daemon-reload
+[student@MON-01 ~]$ 
+$ echo student | sudo -S systemctl restart grafana-server
+echo student | sudo -S systemctl restart grafana-server
+[student@MON-01 ~]$ 
+$ sleep 45
+sleep 45
+[student@MON-01 ~]$ 
+$ echo student | sudo -S ls -l /var/spool/mail/grafana-alerts
+echo student | sudo -S ls -l /var/spool/mail/grafana-alerts
+-rw-rw---- 1 grafana-alerts mail 40791 ноя 17 14:51 /var/spool/mail/grafana-alerts
+[student@MON-01 ~]$ 
+$ echo student | sudo -S journalctl -u grafana-server --since "-3min" --no-pager | grep -iE "notif|smtp|error" | tail -6
+echo student | sudo -S journalctl -u grafana-server --since "-3min" --no-pager | grep -iE "notif|smtp|error" | tail -6
+ноя 17 14:51:07 MON-01 grafana[1255]: logger=settings t=2026-11-17T14:51:07.656320858+03:00 level=info msg="Config overridden from Environment variable" var="GF_SMTP_HOST=localhost:25"
+ноя 17 14:51:07 MON-01 grafana[1255]: logger=settings t=2026-11-17T14:51:07.65633533+03:00 level=info msg="Config overridden from Environment variable" var="GF_SMTP_SKIP_VERIFY=true"
+ноя 17 14:51:07 MON-01 grafana[1255]: logger=settings t=2026-11-17T14:51:07.656353387+03:00 level=info msg="Config overridden from Environment variable" var="GF_SMTP_FROM_ADDRESS=grafana@MON-01.localdomain"
+ноя 17 14:51:07 MON-01 grafana[1255]: logger=settings t=2026-11-17T14:51:07.656367443+03:00 level=info msg="Config overridden from Environment variable" var="GF_SMTP_FROM_NAME=Grafana"
+ноя 17 14:51:10 MON-01 grafana[1255]: logger=ngalert.sender.router rule_uid=office-temp-age org_id=1 t=2026-11-17T14:51:10.053486625+03:00 level=info msg="Sending alerts to local notifier" count=1
+ноя 17 14:51:50 MON-01 grafana[1255]: logger=ngalert.sender.router rule_uid=office-temp-age org_id=1 t=2026-11-17T14:51:50.014618791+03:00 level=info msg="Sending alerts to local notifier" count=1
+[student@MON-01 ~]$ 

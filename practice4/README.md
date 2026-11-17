@@ -8,7 +8,7 @@
 
 | Требование | Где выполнено |
 |---|---|
-| Приёмник из раздаточных материалов установлен на CTRL через Docker Compose | `ctrl/compose.yml`, `ctrl/receiver.js` (версия 2 — см. примечание в конце) |
+| Приёмник из раздаточных материалов установлен на CTRL через Docker Compose | `ctrl/compose.yml`, `ctrl/receiver.js` (версия 3 — см. примечание в конце) |
 | Node-RED поднят на IOT через Docker Compose и открывается с WIN | `iot/compose.yml`, `http://192.168.50.10:1880` |
 | В Node-RED два готовых виртуальных датчика: температура и влажность | `iot/flows.json` |
 | Датчики сами отправляют показание каждые 5 секунд, CTRL его пишет | `evidence4/02-receiver-log.txt` |
@@ -180,3 +180,8 @@ sudo docker compose -f compose.yml ps > ~/practice4/ctrl-containers.txt
 > С ПР №5 приёмник обновлён до версии 2 (появился `POST /api/actuators`), а в `flows.json`
 > добавлена вкладка «Вентилятор FAN-01» — см. `../practice5/README.md`. Поток датчиков при этом
 > не изменился и продолжает отправлять показания на `/api/readings`.
+>
+> С ПР №7 установлен выданный приёмник версии 3: добавился `GET /metrics` с метриками для
+> Prometheus. Старый файл сохранён на CTRL-01 как `receiver.js.v2.bak`; адреса `/api/readings`
+> и `/api/actuators` работают как раньше, поэтому отправка показаний и запись в SQLite
+> не прерывались — см. `../practice7/README.md`.

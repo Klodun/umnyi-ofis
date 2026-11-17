@@ -1,0 +1,12 @@
+$ echo student | sudo -S cp -n /etc/prometheus/prometheus.yml /root/prometheus.yml.orig
+echo student | sudo -S cp -n /etc/prometheus/prometheus.yml /root/prometheus.yml.orig
+[sudo] ������ ��� student: [student@MON-01 ~]$ 
+$ echo student | sudo -S install -o root -g root -m 0644 /tmp/prometheus.yml /etc/prometheus/prometheus.yml
+echo student | sudo -S install -o root -g root -m 0644 /tmp/prometheus.yml /etc/prometheus/prometheus.yml
+[student@MON-01 ~]$ 
+$ promtool check config /etc/prometheus/prometheus.yml
+promtool check config /etc/prometheus/prometheus.yml
+Checking /etc/prometheus/prometheus.yml
+ SUCCESS: /etc/prometheus/prometheus.yml is valid prometheus config file syntax
+
+[student@MON-01 ~]$ 

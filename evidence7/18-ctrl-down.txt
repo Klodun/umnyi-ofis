@@ -1,0 +1,33 @@
+
+[student@MON-01 ~]$ 
+$ sleep 30
+sleep 30
+[student@MON-01 ~]$ 
+$ python3 /tmp/metrics_report.py
+python3 /tmp/metrics_report.py
+up{id=office-controller} = 0
+office_temperature_celsius: нет данных
+office_humidity_percent: нет данных
+office_fan_on: нет данных
+office_control_mode_auto: нет данных
+office_sensor_last_reading_timestamp_seconds: нет данных
+office_sensor_age_seconds: нет данных
+[student@MON-01 ~]$ 
+$ echo "=== target health ==="
+echo "=== target health ==="
+=== target health ===
+[student@MON-01 ~]$ 
+$ curl -s http://127.0.0.1:9090/api/v1/targets | python3 -c "import json,sys; d=json.load(sys.stdin)['data']['activeTargets']; [print(t['scrapeUrl'], t['health'], repr(t.get('lastError'))[:80]) for t in d]"
+curl -s http://127.0.0.1:9090/api/v1/targets | python3 -c "import json,sys; d=json.load(sys.stdin)['data']['activeTargets']; [print(t['scrapeUrl'], t['health'], repr(t.get('lastError'))[:80]) for t in d]"
+http://192.168.40.10:8080/metrics down 'Get "http://192.168.40.10:8080/metrics": dial tcp 192.168.40.10:8080: connect: 
+[student@MON-01 ~]$ 
+$ echo "=== rules ==="
+echo "=== rules ==="
+=== rules ===
+[student@MON-01 ~]$ 
+$ curl -s -u admin:admin "http://127.0.0.1:3000/api/prometheus/grafana/api/v1/rules" | python3 -c "import json,sys; d=json.load(sys.stdin); [print(r['name'], '|', r['state']) for g in d['data']['groups'] for r in g['rules']]"
+curl -s -u admin:admin "http://127.0.0.1:3000/api/prometheus/grafana/api/v1/rules" | python3 -c "import json,sys; d=json.load(sys.stdin); [print(r['name'], '|', r['state']) for g in d['data']['groups'] for r in g['rules']]"
+TEMP-01 нет новых показаний | inactive
+HUM-01 нет новых показаний | inactive
+CTRL-01 недоступен | firing
+[student@MON-01 ~]$ 

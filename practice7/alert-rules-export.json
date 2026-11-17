@@ -1,0 +1,184 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: office-sensors
+      folder: Office
+      interval: 10s
+      rules:
+        - uid: office-temp-age
+          title: TEMP-01 нет новых показаний
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus-office
+              model:
+                editorMode: code
+                expr: office_sensor_age_seconds{sensor_id="TEMP-01"} and on(job, instance) (up{job="office-controller"} == 1)
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: B
+                type: reduce
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 20
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        type: last
+                expression: B
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          dashboardUid: ""
+          panelId: 0
+          noDataState: NoData
+          execErrState: Error
+          for: 0s
+          annotations:
+            description: CTRL-01 доступен (up=1), но возраст показаний TEMP-01 превысил 20 с.
+            summary: TEMP-01 не присылает показания дольше 20 секунд
+          labels:
+            sensor: TEMP-01
+            severity: warning
+          isPaused: false
+        - uid: office-hum-age
+          title: HUM-01 нет новых показаний
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus-office
+              model:
+                editorMode: code
+                expr: office_sensor_age_seconds{sensor_id="HUM-01"} and on(job, instance) (up{job="office-controller"} == 1)
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: B
+                type: reduce
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 20
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        type: last
+                expression: B
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          dashboardUid: ""
+          panelId: 0
+          noDataState: NoData
+          execErrState: Error
+          for: 0s
+          annotations:
+            description: CTRL-01 доступен (up=1), но возраст показаний HUM-01 превысил 20 с.
+            summary: HUM-01 не присылает показания дольше 20 секунд
+          labels:
+            sensor: HUM-01
+            severity: warning
+          isPaused: false
+        - uid: office-ctrl-down
+          title: CTRL-01 недоступен
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus-office
+              model:
+                editorMode: code
+                expr: up{job="office-controller"}
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: B
+                type: reduce
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 1
+                        type: lt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        type: last
+                expression: B
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          dashboardUid: ""
+          panelId: 0
+          noDataState: NoData
+          execErrState: Error
+          for: 0s
+          annotations:
+            description: Цель office-controller имеет up=0, показания датчиков недостоверны.
+            summary: CTRL-01 не отвечает на опрос Prometheus
+          labels:
+            severity: critical
+            target: CTRL-01
+          isPaused: false
