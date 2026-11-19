@@ -1,0 +1,37 @@
+# Проверка цели Prometheus и правил Grafana: выражение, порог, for, noData, источник данных.
+# Выполнено 19.11.2026 с MON-01.
+
+office-controller http://192.168.40.10:8080/metrics health=up lastError=''
+=== правила Grafana ===
+office-temp-age | TEMP-01 нет новых показаний
+   expr: ['office_sensor_age_seconds{sensor_id="TEMP-01"} and on(job, instance) (up{job="office-controller"} == 1)']
+   порог: [{'params': [20], 'type': 'gt'}]
+   for: 0s | noData: NoData | datasource: ['prometheus-office', '__expr__', '__expr__']
+office-hum-age | HUM-01 нет новых показаний
+   expr: ['office_sensor_age_seconds{sensor_id="HUM-01"} and on(job, instance) (up{job="office-controller"} == 1)']
+   порог: [{'params': [20], 'type': 'gt'}]
+   for: 0s | noData: NoData | datasource: ['prometheus-office', '__expr__', '__expr__']
+office-ctrl-down | CTRL-01 недоступен
+   expr: ['up{job="office-controller"}']
+   порог: [{'params': [1], 'type': 'lt'}]
+   for: 0s | noData: NoData | datasource: ['prometheus-office', '__expr__', '__expr__']
+=== группы (интервал оценки) ===
+Traceback (most recent call last):
+  File "/root/rules_check.py", line 31, in <module>
+    for g in get("http://127.0.0.1:3000/api/v1/provisioning/alert-rules/export")["groups"]:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/rules_check.py", line 11, in get
+    return json.load(r)
+           ^^^^^^^^^^^^
+  File "/usr/lib64/python3.11/json/__init__.py", line 293, in load
+    return loads(fp.read(),
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib64/python3.11/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib64/python3.11/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib64/python3.11/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)

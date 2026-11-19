@@ -13,9 +13,7 @@
     "name": "Температура, °C (повтор 5 с)",
     "props": [
       {
-        "p": "payload",
-        "v": "35",
-        "vt": "num"
+        "p": "payload"
       },
       {
         "p": "timestamp",
@@ -28,6 +26,8 @@
     "once": true,
     "onceDelay": "1",
     "topic": "",
+    "payload": "38",
+    "payloadType": "num",
     "x": 170,
     "y": 160,
     "wires": [
@@ -169,6 +169,8 @@
     "once": true,
     "onceDelay": "1",
     "topic": "",
+    "payload": "45",
+    "payloadType": "num",
     "x": 170,
     "y": 560,
     "wires": [
@@ -657,8 +659,6 @@
     "start": "",
     "inout": "out",
     "property": "payload.state",
-    "top": true,
-    "bottom": false,
     "x": 1000,
     "y": 320,
     "wires": [
